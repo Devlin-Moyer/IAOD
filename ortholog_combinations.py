@@ -48,7 +48,7 @@ fungi_names = [
 with open('ortholog_combinations.sh', 'w') as out_file:
     out_file.write('#!/bin/bash\n\n#!/bin/bash\n')
     out_file.write('#SBATCH --mail-type=ALL\n')
-    out_file.write('#SBATCH --mail-user=moyerd2@ccf.org\n')
+    out_file.write('#SBATCH --mail-user=\n')
     out_file.write('#SBATCH --job-name=new_orthologs\n\n')
     out_file.write('module load R/3.5.0\n\n')
     add_new_genome(out_file)
