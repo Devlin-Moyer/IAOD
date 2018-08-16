@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<br />
+<div>
+  <p>
+    {{ query }}
+  </p>
+  <small>
+    Want to see different columns? Use <a href="{% url 'sitepages:advanced_search' %}">Advanced Search</a>. 
+    Click on a row to see detailed information about that intron.
+  </small>
+</div>
+
+<table data-toggle="table" data-pagination=true>
+  <thead>
+    <tr>
+      <th data-sortable="true" data-sorter="alphanum2">Genome Assembly</th>
+      <th data-sortable="true" data-sorter="alphanum1">Taxonomic Name</th>
+      <th data-sortable="true" data-sorter="alphanum1">Gene Name</th>
+      <th data-sortable="true" data-sorter="alphanum1">Terminal Dinucleotides</th>
+      <th data-sortable="true" data-sorter="alphanum1">Chromosome</th>
+      <th data-sortable="true" data-sorter="numericOnly">Start</th>
+      <th data-sortable="true" data-sorter="numericOnly">Stop</th>
+    </tr>
+  </thead>
+  <tbody data-link="row" class="rowlink">
+    {% for hit in search_results %}
+    <tr>
+      <td>
+        <a href="{% url 'results:individual' hit.0 %}">{{ hit.1 }}</a>
+      </td>
+       <td>
+        <a href="{% url 'results:individual' hit.0 %}">{{ hit.2 }}</a>
+      </td>
+      <td>
+        <a href="{% url 'results:individual' hit.0 %}">{{ hit.3 }}</a>
+      </td>
+       <td>
+        <a href="{% url 'results:individual' hit.0 %}">{{ hit.4 }}</a>
+      </td>
+      <td>
+        <a href="{% url 'results:individual' hit.0 %}">{{ hit.5 }}</a>
+      </td>
+       <td>
+        <a href="{% url 'results:individual' hit.0 %}">{{ hit.6 }}</a>
+      </td>
+      <td>
+        <a href="{% url 'results:individual' hit.0 %}">{{ hit.7 }}</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br />
+
+
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<table data-toggle="table" data-pagination=true style="font-family:monospace;">
+  <thead>
+    <tr>
+      <th data-sortable="true" data-sorter="alphanum1">Taxonomic Name</th>
+      <th data-sortable="true" data-sorter="alphanum1">Gene Name</th>
+      <th data-sortable="true" data-sorter="alphanum1">Sequence</th>
+    </tr>
+  </thead>
+  <tbody data-link="row" class="rowlink">
+    {% for row in info_list %}
+    <tr>
+      <td>
+        <a href="{% url 'results:individual' row.0 %}">{{ row.1 }}</a>
+      </td>
+      <td>
+        <a href="{% url 'results:individual' row.0 %}">{{ row.2 }}</a>
+      </td>
+      <td>
+        <a href="{% url 'results:individual' row.0 %}">{{ row.3 }}</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br />
+
+
+{% endblock %}

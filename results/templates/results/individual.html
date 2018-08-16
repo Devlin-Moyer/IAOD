@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<center><h2>{{ data.0 }}</h2></center>
+<br />
+<table class="table">
+  <thead>
+    <tr>
+      <h4>Basic Information</h4>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Taxonomic Name:</td>
+      <td>{{ data.tax_name }}</td>
+    </tr>
+    <tr>
+      <td>Common Name:</td>
+      <td>{{ data.com_name }}</td>
+    </tr>
+    <tr>
+      <td>Genome Assembly:</td>
+      <td>{{ data.genome }}</td>
+    </tr>
+    <tr title="Will often be blank, as many genomes have relatively few named genes.">
+      <td>
+        Gene Symbol / Name:<sup>*</sup>
+      </td>
+      <td>{{ data.symbol_name }}</td>
+    </tr>
+    <tr title="Score indicates how 'U12-like' the intron is. Introns with positive scores are U12-dependent introns.">
+      <td>
+        Score:<sup>*</sup>
+      </td>
+      <td>{{ data.score }}</td>
+    </tr>
+    <tr>
+      <td>Intron Class:</td>
+      <td>{{ data.intron_class }}
+    </tr>
+    <tr>
+      <td>Unique ID:</td>
+      <td>{{ data.id }}</td>
+    </tr>
+  </tbody>
+</table>
+<table class="table">
+  <thead>
+    <tr>
+      <h4>Coordinates</h4>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Chromosome:</td>
+      <td>{{ data.chromosome }}</td>
+    </tr>
+    <tr>
+      <td>Start:</td>
+      <td>{{ data.start }}</td>
+    </tr>
+    <tr>
+      <td>Stop:</td>
+      <td>{{ data.stop }}</td>
+    </tr>
+    <tr>
+      <td>Length:</td>
+      <td>{{ data.length }}</td>
+    </tr>
+    <tr>
+      <td>Strand:</td>
+      <td>{{ data.strand }}</td>
+    </tr>
+    <tr>
+      <td>Intron Rank:</td>
+      <td>{{ data.intron_rank }}</td>
+    </tr>
+    <tr title="An intron is phase 0 if it lies directly between two codons, phase 1 if between the first and second nucleotides of one codon, and phase 2 if between the second and third nucleotdies.">
+      <td>
+        Intron Phase:<sup>*</sup>
+      </td>
+      <td>{{ data.phase }}</td>
+    </tr>
+  </tbody>
+</table>
+<table class="table">
+  <thead>
+    <tr>
+      <h4>Sequence Information</h4>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Terminal Dinucleotides:</td>
+      <td>{{ data.tds }}</td>
+    </tr>
+    <tr>
+      <td>Upstream Exonic Sequence:</td>
+      <td>{{ data.up_seq }}</td>
+    </tr>
+    <tr>
+      <td>Downstream Exonic Sequence:</td>
+      <td>{{ data.down_seq }}</td>
+    </tr>
+    <tr title="The 3' end of the intron with the most probable branch point site enclosed by square brackets.">
+      <td>Branch point region:*</td>
+      <td>{{ data.branch_seq }}</td>
+    </tr>
+    <tr>
+      <td>Full Intron Sequence:</td>
+      <td>
+        <a data-toggle="collapse" href="#collapse1">Show</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<div id="collapse1" class="panel-collapse collapse">
+  <div class="row-fluid">{{ data.full_seq }}</div>
+</div>
+<br />
+<table class="table">
+  <thead>
+    <tr>
+      <h4>External Resources</h4>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Ensembl Gene ID:</td>
+      <td>
+        <a href="{{ gene_url }}">{{ data.gene_id }}</a>
+      </td>
+    </tr>
+    <tr>
+      <td>Ensembl Transcript ID:</td>
+      <td>
+        <a href="{{ transcript_url }}">{{ data.trans_id }}</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+<br />
+<br />
+<br />
+
+{% endblock %}

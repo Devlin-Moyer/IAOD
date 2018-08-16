@@ -1,0 +1,380 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<br />
+<center>
+  <h2>Advanced Search</h2>
+  <small>For very specific search queries</small>
+</center>
+<br />
+
+<form method="GET" action="/results/advanced_list">
+  <div class="form-row">
+    <label><strong>Gene Level:</strong></label>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-4">
+      <label for="tax_name" data-toggle="tooltip" title="Leave blank for all organisms.">Organism (Genome):</label>
+      <select class="custom-select" multiple name="tax_name">
+        {% for individual in names %}
+        <option>{{ individual }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col">
+      <label>Ensembl Gene ID:</label>
+      <input class="form-control" type="text" name="gene_id">
+    </div>
+    <div class="col">
+      <label>Ensembl Transcript ID:</label>
+      <input class="form-control" type="text" name="trans_ID">
+    </div>
+    <div class="col">
+      <label>Gene Symbol:</label>
+      <input class="form-control" type="text" name="gene_symbol">
+    </div>
+  </div>
+  <div class="form-row">
+    <label><strong>Intron Level:</strong></label>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-2">
+      <label data-toggle="tooltip" title="Searching across more than just U12 introns may take much longer.">
+        Intron Class:
+      </label>
+      <select class="form-control" name="intron_class" data-toggle="tooltip" title="Searching across more than just U12 introns may take much longer.">
+        <option value="U12-Dependent/Minor">U12-Dependent</option>
+        <option value="U2-Dependent/Major">U2-Dependent</option>
+	<option value="">Both</option>
+      </select>
+    </div>
+    <div class="form-group col-2">
+      <label data-toggle="tooltip" title="Phase 0 introns fall directly between two codons, phase 1s between the first and second nucleotides, and phase 2s between the second and third.">
+        Phase:
+      </label>
+      <select class="form-control" name="phase">
+        <option></option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+      </select>
+    </div> 
+    <div class="form-group col-auto">
+      <label>Length:</label>
+    </div>
+    <div class="col-auto">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox">
+	<label class="form-check-label">Is exactly</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="length__gt">
+        <label class="form-check-label" for="length__gt">Greater than</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="length__lt">
+        <label class="form-check-label" for="length__lt">Less than</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="length__range"
+	data-toggle="tooltip" title="Enter two numbers separated by a comma">
+        <label class="form-check-label" for="length__range" 
+	data-toggle="tooltip" title="Enter two numbers separated by a comma">
+          Between
+	</label>
+      </div>
+    </div>
+    <div class="col">
+      <input class="form-control" type="number" min="0" name="length">
+    </div>
+    <div class="form-group col-auto">
+      <label data-toggle="tooltip"
+      title="E.g. the first intron in a transcript is rank 1.">
+        Rank:
+      </label>
+    </div>
+    <div class="col-auto">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox">
+	<label class="form-check-label">Is exactly</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="intron_rank__gt">
+        <label class="form-check-label" for="intron_rank__gt">
+          Greater than
+	</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="intron_rank__lt">
+        <label class="form-check-label" for="intron_rank__lt">Less than</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" 
+	name="intron_rank__range" data-toggle="tooltip"
+	title="Enter two numbers separated by a comma">
+        <label class="form-check-label" for="intorn_rank__range" 
+        data-toggle="tooltip" title="Enter two numbers separated by a comma.">
+          Between
+	</label>
+      </div>
+    </div>
+    <div class="col">
+      <input class="form-control" type="number" name="intron_rank"
+      data-toggle="tooltip" min ="1"
+      title="E.g. the first intron in a transcript is rank 1.">
+    </div>
+  </div>
+  <div class="form-row">
+    <label><strong>Coordinates:</strong></label>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-2">
+      <label>Chromosome:</label>
+      <input class="form-control" type="text" name="chromosome">
+    </div>
+     <div class="form-group col-2">
+      <label>Strand:</label>
+      <select class="form-control" name="strand">
+        <option></option>
+        <option>+</option>
+        <option>-</option>
+      </select>
+    </div>
+    <div class="col-auto">
+      <label>Start:</label>
+    </div>
+    <div class="col-auto">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox">
+	<label class="form-check-label">Is exactly</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="start__gt">
+        <label class="form-check-label" for="start__gt">Greater than</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="start__lt">
+        <label class="form-check-label" for="start__lt">Less than</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="start__range"
+	data-toggle="tooltip" title="Enter two numbers separated by a comma">
+        <label class="form-check-label" for="start__range"
+	data-toggle="tooltip" title="Enter two numbers separated by a comma">
+          Between
+        </label>
+      </div>
+    </div>
+    <div class="col">
+      <input class="form-control" type="number" min="0" name="start">
+    </div>
+    <div class="col-auto">
+      <label>Stop:</label>
+    </div>
+    <div class="col-auto">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox">
+	<label class="form-check-label">Is exactly</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="stop__gt">
+        <label class="form-check-label" for="stop__gt">Greater than</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="stop__lt">
+        <label class="form-check-label" for+"stop__lt">Less than</label>
+      </div>
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" name="stop__range"
+	data-toggle="tooltip" title="Enter two numbers separated by a comma">
+        <label class="form-check-label" for="stop__range"
+        data-toggle="tooltip" title="Enter two numbers separated by a comma">
+          Between
+        </label>
+      </div>
+    </div>
+    <div class="col">
+      <input class="form-control" type="number" min="0" name="stop">
+    </div>
+  </div>
+  <div class="form-row">
+    <label><strong>Sequence:</strong></label>
+  </div>
+  <div class="form-row">
+    <div class="form-group col-md-2">
+      <label data-toggle="tooltip"
+      title="Usually GTAG or ATAC; others are extremely rare">
+        Terminal Dinucleotides:
+      </label>
+      <input class="form-control" type="text" name="tds" maxlength="4"
+      data-toggle="tooltip"
+      title="Usually GTAG or ATAC; others are extremely rare">
+    </div>
+    <div class="col-md-10">
+      <label>Branch Point Region:</label>
+      <input class="form-control" type="text" name="branch_seq" maxlength="80">
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group col">
+      <label>Upstream Exonic Sequence:</label>
+      <input class="form-control" type="text" name="up_seq" maxlength="80">
+    </div>
+    <div class="form-group col">
+      <label>Downstream Exonic Sequence:</label>
+      <input class="form-control" type="text" name="down_seq" maxlength="80">
+    </div>
+  </div>
+  <div class="form-row">
+    <label>Whole Intron:</label>
+    <textarea class="form-control" name="full_seq" rows="5"></textarea>
+  </div>
+  <br /><br />
+  <table class="table">
+    <thead>
+      <tr>
+        <strong>Fields to display in result:</strong>
+      </tr>
+      <tr><small> (Leave blank for default columns)</small></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_chromosome">
+            <label class="form-check-label">Chromosome</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_start">
+            <label class="form-check-label">Start</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_stop">
+            <label class="form-check-label">Stop</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_strand">
+            <label class="form-check-label">Strand</label>
+          </div>
+        </td> 
+	<td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" 
+	    name="y_gene_symbol">
+	    <label class="form-check-label">Gene Name</label>
+	  </div>
+	</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_score">
+            <label class="form-check-label">Score</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox"
+            name="y_intron_class">
+            <label class="form-check-label">Class</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox"
+            name="y_intron_rank">
+            <label class="form-check-label">Rank</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_phase">
+            <label class="form-check-label">Phase</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_length">
+            <label class="form-check-label">Length</label>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_tax_name">
+            <label class="form-check-label">Taxonomic Name</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_com_name">
+            <label class="form-check-label">Common Name</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_genome">
+            <label class="form-check-label">Genome Assembly</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_gene_id">
+            <label class="form-check-label">Ensembl Gene ID</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_trans_id">
+            <label class="form-check-label">Ensembl Transcript ID</label>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_tds">
+            <label class="form-check-label">Terminal Dinucleotides</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_short_seq">
+            <label class="form-check-label">Abbreviated Sequence</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox"
+            name="y_branch_seq">
+            <label class="form-check-label">Branch Point Region</label>
+          </div>
+        </td>
+	<td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_up_seq">
+	    <label class="form-check-label">Upstream Exonic Sequence</label>
+	  </div>
+	</td>
+	<td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_down_seq">
+	    <label class="form-check-label">Downstream Exonic Sequence</label>
+	  </div>
+	</td>
+      </tr>
+    </tbody>
+  </table>
+  <button type="submit" class="btn btn-primary">Search</button>
+</form>
+<br />
+<br />
+
+{% endblock %}

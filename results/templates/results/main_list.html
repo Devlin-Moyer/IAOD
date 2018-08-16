@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<br />
+<div>
+  <p>
+    {{ query }}
+  </p>
+  <p>Click on a row to see detailed information about that intron</p>
+</div>
+
+<table data-toggle="table" data-pagination=true style="font-family:monospace;">
+  <thead>
+    <tr>
+      {% for column in columns %}
+        {% if column == 'Genome Assembly' %}
+          <th data-sortable="true" data-sorter="alphanum2">Genome Assembly</th>
+        {% else %}
+          <th data-sortable="true" data-sorter="alphanum1">{{ column }}</th>
+        {% endif %}
+      {% endfor %}
+    </tr>
+  </thead>
+  <tbody data-link="row" class="rowlink">
+    {% for row in rows %}
+    <tr>
+      {% for field in row %}
+      {% if field == row.0 %}
+      {% else %}
+      <td>
+        <a href="{% url 'results:individual' row.0 %}">{{ field }}</a>
+      </td>
+      {% endif %}
+      {% endfor %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

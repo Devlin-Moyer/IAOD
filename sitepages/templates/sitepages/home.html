@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<br />
+<center>
+  <h2>The Intron Annotation Database (IADB)</h2>
+  <small>A comprehensive repository of intron annotation data</small>
+</center>
+<br />
+<br />
+<div class="container">
+  <h3>The Search Engines</h3>
+  <p> There are four search engines available for querying the intron 
+  annotation data stored in this database: </p>
+  <ul type="disc">
+    <li>
+      To find introns using criteria like species and gene name or class and 
+      terminal dinucleotides or any combination of the above, use the 
+      <a href="{% url 'sitepages:main_search'%}">main search</a>. 
+    </li>
+    <li>
+      An exhaustive list of search options is available from the 
+      <a href="{% url 'sitepages:advanced_search'%}">advanced search</a>.
+    </li>
+    <li>
+      To search for only U12-dependent introns using simple search criteria, 
+      use the <a href="{% url 'sitepages:U12_search' %}">U12 search</a>.
+    </li>
+    <li>
+      To view sequences of orthologous introns side-by-side, use the 
+      <a href="{% url 'orthologs:search' %}">ortholog search</a>. Note that
+      you will need to find a particular ortholog cluster ID or intron ID using
+      one of the other search engines in order to use this search engine 
+      directly.
+    </li>
+  </ul>
+  <h3>Other Pages</h3>
+  <ul type="disc">
+    <li>
+      To download BED or FASTA files containing intron annotation or sequence
+      information, go to the <a href="{% url 'sitepages:downloads' %}">
+      downloads page</a>.
+    </li>
+    <li>
+      For detailed information about how the various search engines work, how the
+      data in the database was acquired, and how the orthologous relationships 
+      between introns were determined, see the 
+      <a href="{% url 'sitepages:about' %}">about page</a>.
+    </li>
+  </ul>
+</div>
+
+{% endblock %}
