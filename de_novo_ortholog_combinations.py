@@ -43,7 +43,7 @@ fungi_names = [
 with open('create_database2.sh', 'w') as out_file:
     out_file.write('#!/bin/bash\n\n#!/bin/bash\n')
     out_file.write('#SBATCH --mail-type=ALL\n')
-    out_file.write('#SBATCH --mail-user=moyerd2@ccf.org\n')
+    out_file.write('#SBATCH --mail-user=\n')
     out_file.write('#SBATCH --job-name=create_database_2\n\n')
     out_file.write('module load R/3.5.0\n\n')
     repopulate_database(out_file, 'default', default_names)
