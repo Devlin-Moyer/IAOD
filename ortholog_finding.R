@@ -8,7 +8,7 @@ library("parallel")
 # outputs a lot of messages as it loads- do not care what any of them say
 #suppressMessages(library("Biostrings"))
 
-# biomaRt-related functions
+# biomaRt-related functions ###################################################
 
 # convert a binomial name into a biomart attribute name
 get_attribute <- function(tax_name, type) {
@@ -62,7 +62,7 @@ run_biomaRt_query <- function(tax_name_1, tax_name_2, gene_ids, type) {
   return(gene_orthologs)
 }
 
-# SQL functions
+# SQL functions ###############################################################
 
 # get a list of all the gene IDs in a particular genome assembly
 get_gene_ids <- function(genome, conn) {
@@ -103,7 +103,7 @@ get_seqs <- function(intron_id, genome, conn) {
   return(sequence)
 }
 
-# functions for finding intron orthologs given a pair of gene ids
+# functions for finding intron orthologs given a pair of gene ids #############
 
 # just get a pairwise alignment score for two intron sequences
 compare_sequences <- function(intron_id_1, intron_id_2, seq_df) {
@@ -130,15 +130,9 @@ find_best_pair <- function(intron_id, id_list, seq_df, output_file) {
     orthologous_pairs <- scored_pairs[which(
       unlist(lapply(scored_pairs, function(x) x[[3]] == max_score))
     )]
-    # sometimes, near-identical but technically distinct introns from different
-    # transcripts of the same gene exist, and have exactly the same similarity
-    # score with an orthologous intron. we will usually only have one element
-    # in orthologous_pairs, but will occasionally have more elements
-    lapply(orthologous_pairs, function(x)
-        cat(paste(x[1], x[2], collapse = "\t"), "\n", sep = "",
-        file = output_file, append = TRUE
-      )
-    )
+    return(orthologous_pairs)
+  } else {
+    return(c(NULL, NULL, NULL))
   }
 }
 
@@ -151,32 +145,49 @@ compare_genes <- function(gene_ids, genome_1, genome_2, output_file) {
   # in both genes so that the sequences for each intron only need to be looked
   # up from the SQLite database once
   conn <- dbConnect(SQLite(), dbname = "seq.db")
-  seq_df_1 <- data.frame(
+  seq_df_1 <- data.frame(stringsAsFactors = FALSE,
     intron_id = get_intron_ids(gene_ids[[1]], genome_1, conn)
   )
   seq_df_1$seq <- lapply(
     seq_df_1$intron_id, get_seqs, genome = genome_1, conn = conn
   )
-  seq_df_2 <- data.frame(
+  seq_df_2 <- data.frame(stringsAsFactors = FALSE,
     intron_id = get_intron_ids(gene_ids[[2]], genome_2, conn)
   )
   seq_df_2$seq <- lapply(
     seq_df_2$intron_id, get_seqs, genome = genome_2, conn = conn
   )
   seq_df <- rbind(seq_df_1, seq_df_2)
-
+  dbDisconnect(conn)
+  
   # then use the intron id column from one dataframe as the id list and apply
   # over the other one to find all intron orthologs between the two genes
-  lapply(
-    as.character(seq_df_1$intron_id),
+  a <- lapply(
+    seq_df_1$intron_id,
     find_best_pair,
-    id_list = as.character(seq_df_2$intron_id),
-    seq_df = seq_df,
-    output_file = output_file
+    id_list = seq_df_2$intron_id,
+    seq_df = seq_df
   )
-  # return nothing because find_best_pair writes directly to the output
-  # file to reduce memory requirements
+  # make sure the highest-scoring pairs of introns are still the highest-
+  # scoring pairs of introns if you switch the order in which you align them to
+  # each other
+  b <- lapply(
+    seq_df_2$intron_id,
+    find_best_pair,
+    id_list = seq_df_1$intron_id,
+    seq_df = seq_df
+  )
+  a <- a[-which(is.null(a))]
+  b <- b[-which(is.null(b))]
+  # need to make sure neither is length 0, which will happen if there are no
+  # orthologous introns between the two genes
+  if ((length(a) != 0) && (length(b) != 0)) {
+    # merge does an inner join by default, which is exactly what we want
+    cat(merge(a, b, by.y = c(2,1)), file = output_file, append = TRUE)
+  }
 }
+
+###############################################################################
 
 # get command-line arguments into helpfully named vaeiables
 args <- commandArgs(trailingOnly = TRUE)
@@ -194,16 +205,13 @@ cat(
   sep = ""
 )
 
-# make this global so we don't have to pass it down through a bunch of applies
-conn <<- dbConnect(SQLite(), dbname = "introns.db")
-
 # make an output file name
 output_file <- paste(
   "ortholog_lists/", genome_1, "_", genome_2, "_intron_orthologs.tsv",
   sep = ""
 )
-# since we write deep within the applied functions, we must append, so we must
-# ensure that we start with an empty file
+# since we write within an lapplied function, we must append, so we must ensure
+# that we start with an empty file
 if (file.exists(output_file)) {
   x <- file.remove(output_file)
 }
@@ -258,14 +266,12 @@ parApply(
 # stop the cluster before we exit the script because that's Good Practice (TM)
 stopCluster(c1)
 
-# leave this here because it's easier to comment out one line than four
-q()
 ###############################################################################
 
 # this section does not run anything in parallel so that you can get helpful
 # output for debugging; trying to have all 20 cores write to one output file
 # in parallel generates a largely useless and illegibile mess
-apply(
-  gene_orthologs, 1, compare_genes, genome_1 = genome_1, genome_2 = genome_2,
-  output_file = output_file
-)
+#apply(
+#  gene_orthologs, 1, compare_genes, genome_1 = genome_1, genome_2 = genome_2,
+#  output_file = output_file
+#)
