@@ -14,7 +14,7 @@ srun Rscript ortholog_finding.R default UMD3.1 Bos_taurus GRCz11 Danio_rerio
 srun Rscript ortholog_finding.R default UMD3.1 Bos_taurus BDGP6 Drosophila_melanogaster
 srun Rscript ortholog_finding.R default UMD3.1 Bos_taurus Galgal5 Gallus_gallus
 srun Rscript ortholog_finding.R default UMD3.1 Bos_taurus GRCh38 Homo_sapiens
-srun Rscript ortholog_finding.R default UMD3.1 Bos_taurus Mmul_8.0 Macaca_mulatta
+srun Rscript ortholog_finding.R default UMD3.1 Bos_taurus Mmul_8.0.1 Macaca_mulatta
 srun Rscript ortholog_finding.R default UMD3.1 Bos_taurus monDom5 Monodelphis_domestica
 srun Rscript ortholog_finding.R default UMD3.1 Bos_taurus GRCm38 Mus_musculus
 srun Rscript ortholog_finding.R default UMD3.1 Bos_taurus Pan_tro_3.0 Pan_troglodytes
@@ -28,7 +28,7 @@ srun Rscript ortholog_finding.R default WBcel235 Caenorhabditis_elegans GRCz11 D
 srun Rscript ortholog_finding.R default WBcel235 Caenorhabditis_elegans BDGP6 Drosophila_melanogaster
 srun Rscript ortholog_finding.R default WBcel235 Caenorhabditis_elegans Galgal5 Gallus_gallus
 srun Rscript ortholog_finding.R default WBcel235 Caenorhabditis_elegans GRCh38 Homo_sapiens
-srun Rscript ortholog_finding.R default WBcel235 Caenorhabditis_elegans Mmul_8.0 Macaca_mulatta
+srun Rscript ortholog_finding.R default WBcel235 Caenorhabditis_elegans Mmul_8.0.1 Macaca_mulatta
 srun Rscript ortholog_finding.R default WBcel235 Caenorhabditis_elegans monDom5 Monodelphis_domestica
 srun Rscript ortholog_finding.R default WBcel235 Caenorhabditis_elegans GRCm38 Mus_musculus
 srun Rscript ortholog_finding.R default WBcel235 Caenorhabditis_elegans Pan_tro_3.0 Pan_troglodytes
@@ -41,7 +41,7 @@ srun Rscript ortholog_finding.R default CanFam3.1 Canis_familiaris GRCz11 Danio_
 srun Rscript ortholog_finding.R default CanFam3.1 Canis_familiaris BDGP6 Drosophila_melanogaster
 srun Rscript ortholog_finding.R default CanFam3.1 Canis_familiaris Galgal5 Gallus_gallus
 srun Rscript ortholog_finding.R default CanFam3.1 Canis_familiaris GRCh38 Homo_sapiens
-srun Rscript ortholog_finding.R default CanFam3.1 Canis_familiaris Mmul_8.0 Macaca_mulatta
+srun Rscript ortholog_finding.R default CanFam3.1 Canis_familiaris Mmul_8.0.1 Macaca_mulatta
 srun Rscript ortholog_finding.R default CanFam3.1 Canis_familiaris monDom5 Monodelphis_domestica
 srun Rscript ortholog_finding.R default CanFam3.1 Canis_familiaris GRCm38 Mus_musculus
 srun Rscript ortholog_finding.R default CanFam3.1 Canis_familiaris Pan_tro_3.0 Pan_troglodytes
@@ -53,7 +53,7 @@ srun Rscript ortholog_finding.R default KH Ciona_intestinalis GRCz11 Danio_rerio
 srun Rscript ortholog_finding.R default KH Ciona_intestinalis BDGP6 Drosophila_melanogaster
 srun Rscript ortholog_finding.R default KH Ciona_intestinalis Galgal5 Gallus_gallus
 srun Rscript ortholog_finding.R default KH Ciona_intestinalis GRCh38 Homo_sapiens
-srun Rscript ortholog_finding.R default KH Ciona_intestinalis Mmul_8.0 Macaca_mulatta
+srun Rscript ortholog_finding.R default KH Ciona_intestinalis Mmul_8.0.1 Macaca_mulatta
 srun Rscript ortholog_finding.R default KH Ciona_intestinalis monDom5 Monodelphis_domestica
 srun Rscript ortholog_finding.R default KH Ciona_intestinalis GRCm38 Mus_musculus
 srun Rscript ortholog_finding.R default KH Ciona_intestinalis Pan_tro_3.0 Pan_troglodytes
@@ -64,7 +64,7 @@ srun Rscript ortholog_finding.R default KH Ciona_intestinalis TETRAODON8 Tetraod
 srun Rscript ortholog_finding.R default GRCz11 Danio_rerio BDGP6 Drosophila_melanogaster
 srun Rscript ortholog_finding.R default GRCz11 Danio_rerio Galgal5 Gallus_gallus
 srun Rscript ortholog_finding.R default GRCz11 Danio_rerio GRCh38 Homo_sapiens
-srun Rscript ortholog_finding.R default GRCz11 Danio_rerio Mmul_8.0 Macaca_mulatta
+srun Rscript ortholog_finding.R default GRCz11 Danio_rerio Mmul_8.0.1 Macaca_mulatta
 srun Rscript ortholog_finding.R default GRCz11 Danio_rerio monDom5 Monodelphis_domestica
 srun Rscript ortholog_finding.R default GRCz11 Danio_rerio GRCm38 Mus_musculus
 srun Rscript ortholog_finding.R default GRCz11 Danio_rerio Pan_tro_3.0 Pan_troglodytes
@@ -74,7 +74,7 @@ srun Rscript ortholog_finding.R default GRCz11 Danio_rerio FUGU4 Takifugu_rubrip
 srun Rscript ortholog_finding.R default GRCz11 Danio_rerio TETRAODON8 Tetraodon_rubripes
 srun Rscript ortholog_finding.R default BDGP6 Drosophila_melanogaster Galgal5 Gallus_gallus
 srun Rscript ortholog_finding.R default BDGP6 Drosophila_melanogaster GRCh38 Homo_sapiens
-srun Rscript ortholog_finding.R default BDGP6 Drosophila_melanogaster Mmul_8.0 Macaca_mulatta
+srun Rscript ortholog_finding.R default BDGP6 Drosophila_melanogaster Mmul_8.0.1 Macaca_mulatta
 srun Rscript ortholog_finding.R default BDGP6 Drosophila_melanogaster monDom5 Monodelphis_domestica
 srun Rscript ortholog_finding.R default BDGP6 Drosophila_melanogaster GRCm38 Mus_musculus
 srun Rscript ortholog_finding.R default BDGP6 Drosophila_melanogaster Pan_tro_3.0 Pan_troglodytes
@@ -83,7 +83,7 @@ srun Rscript ortholog_finding.R default BDGP6 Drosophila_melanogaster R64-1-1 Sa
 srun Rscript ortholog_finding.R default BDGP6 Drosophila_melanogaster FUGU4 Takifugu_rubripes
 srun Rscript ortholog_finding.R default BDGP6 Drosophila_melanogaster TETRAODON8 Tetraodon_rubripes
 srun Rscript ortholog_finding.R default Galgal5 Gallus_gallus GRCh38 Homo_sapiens
-srun Rscript ortholog_finding.R default Galgal5 Gallus_gallus Mmul_8.0 Macaca_mulatta
+srun Rscript ortholog_finding.R default Galgal5 Gallus_gallus Mmul_8.0.1 Macaca_mulatta
 srun Rscript ortholog_finding.R default Galgal5 Gallus_gallus monDom5 Monodelphis_domestica
 srun Rscript ortholog_finding.R default Galgal5 Gallus_gallus GRCm38 Mus_musculus
 srun Rscript ortholog_finding.R default Galgal5 Gallus_gallus Pan_tro_3.0 Pan_troglodytes
@@ -91,7 +91,7 @@ srun Rscript ortholog_finding.R default Galgal5 Gallus_gallus Rnor_6.0 Rattus_no
 srun Rscript ortholog_finding.R default Galgal5 Gallus_gallus R64-1-1 Saccharomyces_cerevisiae
 srun Rscript ortholog_finding.R default Galgal5 Gallus_gallus FUGU4 Takifugu_rubripes
 srun Rscript ortholog_finding.R default Galgal5 Gallus_gallus TETRAODON8 Tetraodon_rubripes
-srun Rscript ortholog_finding.R default GRCh38 Homo_sapiens Mmul_8.0 Macaca_mulatta
+srun Rscript ortholog_finding.R default GRCh38 Homo_sapiens Mmul_8.0.1 Macaca_mulatta
 srun Rscript ortholog_finding.R default GRCh38 Homo_sapiens monDom5 Monodelphis_domestica
 srun Rscript ortholog_finding.R default GRCh38 Homo_sapiens GRCm38 Mus_musculus
 srun Rscript ortholog_finding.R default GRCh38 Homo_sapiens Pan_tro_3.0 Pan_troglodytes
@@ -99,13 +99,13 @@ srun Rscript ortholog_finding.R default GRCh38 Homo_sapiens Rnor_6.0 Rattus_norv
 srun Rscript ortholog_finding.R default GRCh38 Homo_sapiens R64-1-1 Saccharomyces_cerevisiae
 srun Rscript ortholog_finding.R default GRCh38 Homo_sapiens FUGU4 Takifugu_rubripes
 srun Rscript ortholog_finding.R default GRCh38 Homo_sapiens TETRAODON8 Tetraodon_rubripes
-srun Rscript ortholog_finding.R default Mmul_8.0 Macaca_mulatta monDom5 Monodelphis_domestica
-srun Rscript ortholog_finding.R default Mmul_8.0 Macaca_mulatta GRCm38 Mus_musculus
-srun Rscript ortholog_finding.R default Mmul_8.0 Macaca_mulatta Pan_tro_3.0 Pan_troglodytes
-srun Rscript ortholog_finding.R default Mmul_8.0 Macaca_mulatta Rnor_6.0 Rattus_norvegicus
-srun Rscript ortholog_finding.R default Mmul_8.0 Macaca_mulatta R64-1-1 Saccharomyces_cerevisiae
-srun Rscript ortholog_finding.R default Mmul_8.0 Macaca_mulatta FUGU4 Takifugu_rubripes
-srun Rscript ortholog_finding.R default Mmul_8.0 Macaca_mulatta TETRAODON8 Tetraodon_rubripes
+srun Rscript ortholog_finding.R default Mmul_8.0.1 Macaca_mulatta monDom5 Monodelphis_domestica
+srun Rscript ortholog_finding.R default Mmul_8.0.1 Macaca_mulatta GRCm38 Mus_musculus
+srun Rscript ortholog_finding.R default Mmul_8.0.1 Macaca_mulatta Pan_tro_3.0 Pan_troglodytes
+srun Rscript ortholog_finding.R default Mmul_8.0.1 Macaca_mulatta Rnor_6.0 Rattus_norvegicus
+srun Rscript ortholog_finding.R default Mmul_8.0.1 Macaca_mulatta R64-1-1 Saccharomyces_cerevisiae
+srun Rscript ortholog_finding.R default Mmul_8.0.1 Macaca_mulatta FUGU4 Takifugu_rubripes
+srun Rscript ortholog_finding.R default Mmul_8.0.1 Macaca_mulatta TETRAODON8 Tetraodon_rubripes
 srun Rscript ortholog_finding.R default monDom5 Monodelphis_domestica GRCm38 Mus_musculus
 srun Rscript ortholog_finding.R default monDom5 Monodelphis_domestica Pan_tro_3.0 Pan_troglodytes
 srun Rscript ortholog_finding.R default monDom5 Monodelphis_domestica Rnor_6.0 Rattus_norvegicus
