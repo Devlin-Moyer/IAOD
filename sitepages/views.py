@@ -7,17 +7,23 @@ import re
 def get_all_genomes():
     cur = conn.cursor()
     names = []
-    cur.execute('SELECT DISTINCT tax_name FROM U12s')
+    cur.execute('SELECT name FROM sqlite_master WHERE type = "table"')
     name_list = [x[0] for x in cur.fetchall()]
+    # drop all of the tables made by django or related to the virtual tables
+    # from the list, because those shouldn't be models
+    name_list = [
+        i for i in name_list 
+        if not re.search('(orthologs|auth|django|searchable|sqlite|U12s)', i)
+    ]
     # find all genomes associated with a particular species
-    for tax_name in name_list:
+    for genome in name_list:
         cur.execute(
-            f'SELECT DISTINCT genome FROM U12s WHERE tax_name = "{tax_name}"'
+            f'SELECT tax_name FROM "{genome}" LIMIT 1'
         )
-        genome_list = [x[0] for x in cur.fetchall()]
+        tax_name_list = [x[0] for x in cur.fetchall()]
         names.append([
-            re.sub('_', ' ', tax_name) + ' (' + x + ')'
-            for x in genome_list
+            re.sub('_', ' ', x) + ' (' + genome + ')'
+            for x in tax_name_list
         ])
     # will get a list of assemblies for each species, so need to flatten the
     # list of lists into one list with all of those

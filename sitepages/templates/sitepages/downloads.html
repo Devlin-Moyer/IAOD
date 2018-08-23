@@ -77,7 +77,7 @@
           <tbody>
             {% for item in list %}
             <tr>
-              {% with 'fasta/'|add:item.1|add:'_U12.bed' as file_path %}
+              {% with 'bed/'|add:item.1|add:'_U12.bed' as file_path %}
               <td>
                 <a href="{% static file_path %}">
                   {{ item.0 }}
@@ -85,7 +85,7 @@
               {% endwith %}
               </td>
               <td>
-              {% with 'fasta/'|add:item.1|add:'_U2.bed' as file_path %}
+              {% with 'bed/'|add:item.1|add:'_U2.bed' as file_path %}
                 <a href="{% static file_path %}">
                   {{ item.0 }}
                 </a>

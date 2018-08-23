@@ -12,7 +12,7 @@
 <form method="GET" action="/results/main_list">
   <div class="form-row">
     <div class="form-group col">
-      <label for="tax_name" data-toggle="tooltip" title="Leave blank to search all organisms">Organism (Genome):</label>
+      <label for="tax_name" data-toggle="tooltip">Organism (Genome): <small>(Leave blank to search across all genomes--may take a while)</small></label>
       <select class="custom-select" multiple name="genome">
         {% for individual in names %}
         <option>{{ individual }}</option>
@@ -38,8 +38,9 @@
         Intron Class:
       </label>
       <select class="form-control" name="intron_class" data-toggle="tooltip">
-        <option value="U12-Dependent/Minor">U12-Dependent</option>
-        <option value="U2-Dependent/Major">U2-Dependent</option>
+        <option value=""></option>
+        <option value="U12-Dependent">U12-Dependent</option>
+        <option value="U2-Dependent">U2-Dependent</option>
 	<option value="">Both</option>
       </select>
     </div>

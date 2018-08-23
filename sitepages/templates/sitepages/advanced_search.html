@@ -9,7 +9,7 @@
 </center>
 <br />
 
-<form method="GET" action="/results/advanced_list">
+<form method="GET" action="/results/main_list">
   <div class="form-row">
     <label><strong>Gene Level:</strong></label>
   </div>
@@ -17,8 +17,8 @@
     <div class="form-group col-4">
       <label for="tax_name" data-toggle="tooltip" title="Leave blank for all organisms.">Organism (Genome):</label>
       <select class="custom-select" multiple name="tax_name">
-        {% for individual in names %}
-        <option>{{ individual }}</option>
+        {% for thing in names %}
+        <option>{{ thing }}</option>
         {% endfor %}
       </select>
     </div>
@@ -44,6 +44,7 @@
         Intron Class:
       </label>
       <select class="form-control" name="intron_class" data-toggle="tooltip" title="Searching across more than just U12 introns may take much longer.">
+        <option value=""></option>
         <option value="U12-Dependent/Minor">U12-Dependent</option>
         <option value="U2-Dependent/Major">U2-Dependent</option>
 	<option value="">Both</option>
