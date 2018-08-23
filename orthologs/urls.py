@@ -9,8 +9,7 @@ urlpatterns = [
     path('list', views.ortholog_list, name = 'list'),
     re_path(
         '(?P<input_intron_id>.+)/$',
-        results_views.individual,\
-        name = 'individual'
+        results_views.individual, name = 'individual'
     ),
     path('search', views.ortholog_search, name = 'search'),
 ]

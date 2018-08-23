@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<br />
+<div>
+  <small>Click on a row to see detailed information about that intron.</small>
+</div>
 
 <table data-toggle="table" data-pagination=true style="font-family:monospace;">
   <thead>
@@ -26,6 +30,7 @@
     {% endfor %}
   </tbody>
 </table>
+<small>If there's only one row, it means that the specified intron has no annotated orthologs.</small>
 <br />
 
 
