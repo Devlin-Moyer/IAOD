@@ -13,7 +13,7 @@ column_names = {
     'genome':       'Genome Assembly',
     'score':        'Score',
     'intron_class': 'Class',
-    'id':           'Intron ID',
+    'intron_id':    'Intron ID',
     'chromosome':   'Chromosome',
     'start':        'Start',
     'stop':         'Stop',
@@ -32,14 +32,14 @@ column_names = {
     'trans_id':     'Ensembl Transcript ID'
 }
 
-# functions used in advanced views
+# functions used in main and advanced views ###################################
 # converts QuerySets into lists of lists
 def QS_to_list(search_results, column_list):
     rows = []
     for hit in search_results:
         row = []
         for column in column_list:
-            row.append(getattr(hit, column))
+            row.append(hit[column])
         rows.append(row)
     return(rows)
 
@@ -77,28 +77,71 @@ def column_name_improvement(column_list, query_text):
 # user didn't specify any search terms
 def query_models(filters, genome_list, column_list, query_text):
     # the user entered nothing into any field, so give them all U12s
-    if filters == {}:
-        search_results = U12S.objects.filter(genome = 'GRCh38')
+    if filters == {} and genome_list == []:
+        search_results = models.U12S.objects.filter(genome = 'GRCh38').values(
+            'intron_id', 'genome', 'tax_name', 'gene_symbol', 'tds', 
+            'chromosome', 'start', 'stop'
+        )
         table_rows = QS_to_list(search_results, column_list)
         query_text = 'No search input; showing all U12-dependent introns \
 from human genome hg38 AKA GRCh38. '
         return(table_rows, query_text)
-    # since we may need to run the same query on multiple tables, we will be
-    # generating multiple QuerySets. We can covert each one into a list of
-    # lists and concatenate those lists into one comprehensive list of lists
-    # to pass on to the template
-    else:
+        # since we may need to run the same query on multiple tables, we will 
+        # be generating multiple QuerySets. We can covert each one into a list 
+        # of lists and concatenate those lists into one comprehensive list of 
+        # lists to pass on to the template
+    # the user only chose a genome or list thereof but had no other search terms
+    elif filters == {} and genome_list != []:
+        query_text += ' in '
         for genome in genome_list:
+            # add list of genomes to query_text
+            query_text += f'{genome}, '
             # model names are cleaned by Django, so we must clean our genome
             # names before attempting to query models
-            model_name = re.sub('\.|-|_', '', genome).title()
+            model_name = ''.join(
+                [x.title() for x in re.split('_|\.|-', genome)]
+            )
             # run the SQL query over as many tables as is appropriate
-            search_results = getattr(models, model_name).objects.filter(**filters)
+            search_results = getattr(models, model_name).objects.all().values(
+                *column_list
+            )
             # turn the QuerySet into a list of lists
             table_rows = QS_to_list(search_results, column_list)
-            return(table_rows, query_text)
+        query_text = re.sub(', $', '.', query_text)
+        return(table_rows, query_text)
+    # the user wants to find introns from all genomes matching their search terms
+    elif filters != {} and genome_list == []:
+        # get a list of all the genomes in the database
+        cur = conn.cursor()
+        cur.execute('SELECT name FROM sqlite_master WHERE type = "table"')
+        genome_list = [x[0] for x in cur.fetchall()]
+        # drop all of the tables made by django or related to the virtual tables
+        # from the list, because those won't have models
+        genome_list = [
+            i for i in genome_list
+            if not re.search('(orthologs|auth|django|searchable|sqlite|U12s)', i)
+        ]
+        # then just call this function again using the complete genome list
+        return(query_models(filters, genome_list, column_list, query_text))
+    # the user input a "normal" query with some genomes and some other criteria
+    else:
+        query_text += ' in '
+        for genome in genome_list:
+            query_text += f'{genome}, '
+            # model names are cleaned by Django, so we must clean our genome
+            # names before attempting to query models
+            model_name = ''.join(
+                [x.title() for x in re.split('_|\.|-', genome)]
+            )
+            # run the SQL query over as many tables as is appropriate
+            search_results = getattr(models, model_name)\
+                .objects.filter(**filters).values(*column_list)
+            # turn the QuerySet into a list of lists
+            table_rows = QS_to_list(search_results, column_list)
+        query_text = re.sub(', $', '.', query_text)
+        return(table_rows, query_text)
 
-# actual views
+# actual views ################################################################
 
 def U12_list(request): # parse input from search bar and GET requested info
     # from database
@@ -108,10 +151,8 @@ def U12_list(request): # parse input from search bar and GET requested info
     cur = apsw_conn.cursor()
     if user_query is not '': # at the risk of incorrectly interpreting some
     # search queries, we will simply pass the whole query to fts5
-        cur.execute('SELECT intron_id, genome, tax_name, gene_symbol, tds, \
-chromosome, start, stop FROM searchable WHERE searchable = ?',
-            ('"'+ user_query + '"',)
-        )
+        cur.execute(f'SELECT intron_id, genome, tax_name, gene_symbol, tds, \
+chromosome, start, stop FROM searchable WHERE searchable MATCH "{user_query}"')
         search_results = cur.fetchall()
         return render(
             request,
@@ -138,7 +179,7 @@ chromosome, start, stop FROM U12s WHERE genome = "GRCh38"')
 def main_list(request):
     # no matter what, we need to get the id of every intron returned from 
     # every query so that we can make links to the individual view page
-    column_list = ['id']
+    column_list = ['intron_id']
     # make a list of all of their search criteria to make a string to appear
     # above the table
     query_strings = []
@@ -154,9 +195,9 @@ def main_list(request):
             column_list.append(field[0].lstrip('y_'))
         elif field[1] == '': # skip over fields that had no user input
             pass
-        elif field[0] == 'tax_name': # since the search page input looks like
+        elif field[0] == 'genome': # since the search page input looks like
             # tax_name (genome), we need a regex
-            genome = re.match('\((.+)\)$', field[0]).group(1)
+            genome = re.search('\((.+)\)$', field[1]).group(1)
             genome_list.append(genome)
         else: # everything else should be a simple queryset filter
             # add to the dictionary
@@ -166,18 +207,17 @@ def main_list(request):
             field[1])
 
     # make a nice string to display on the results page
-    query_text = 'Showing results for: ' + ', '.join(query_strings) + '. '
+    query_text = 'Showing results for: ' + ', '.join(query_strings)
 
     # need to pass query text and return column_list in case the user didn't
     # input any columns in their selection and we gave them default options
     (column_list, html_columns, query_text) = column_name_improvement(
-        column_list,
-        query_text
+        column_list, query_text
     )
 
     # use the filters to get information out of the models and return it as a
-    # list of lists for the template; if there's no output, modifies query_text
-    # appropriately, and leaves it unchanged otherwise
+    # list of lists for the template; if there's no input, modifies query_text
+    # appropriately, and adds genomes otherwise
     (table_rows, query_text) = query_models(
         filters, genome_list, column_list, query_text
     )
@@ -196,7 +236,7 @@ def main_list(request):
 def advanced_list(request):
     # no matter what, we need to get the id of every intron returned from 
     # every query so that we can make links to the individual view page
-    column_list = ['id']
+    column_list = ['intron_id']
     # make a list of all of their search criteria to make a string to appear
     # above the table
     query_strings = []
@@ -216,8 +256,8 @@ def advanced_list(request):
         elif '__' in field[0]: # anything with a __ is a greater than, less
             # than, or between modifier for one of the numeric fields
             modifiers.append(field[0])
-        elif field[0] == 'tax_name':
-            genome = re.match('\((.+)\)$', field[0]).group(1)
+        elif field[0] == 'genome':
+            genome = re.search('\((.+)\)$', field[1]).group(1)
             genome_list.append(genome)
         else: # everything else should be a simple queryset filter
             # add to the dictionary
@@ -277,38 +317,42 @@ def advanced_list(request):
 
 def individual(request, input_intron_id): # find all info relating to
     # single intron chosen from results page
-
     # the name of the assembly a given intron is from is in the first part of
     # the intronIC ID, so we need to extract that for the model query
-    genome = res.match('^(.+)\-\w+@\w+', input_intron_id).group(1)
+    genome = re.match('^(.+)-\w+@\w+', input_intron_id).group(1)
 
     # Django makes pretty model names by using title() and removing _ - and .
     # from the SQLite table names, so we must do the same before trying to
     # query a model
-    model_name = re.sub('_|\.|-', '', genome).title()
-    info = getattr(models, model_name).objects.get(intron_id = input_intron_id)
+    model_name = ''.join([x.title() for x in re.split('_|\.|-', genome)])
+    info = getattr(models, model_name).objects.values(
+        'short_seq', 'tax_name', 'com_name', 'genome', 'score', 'intron_class',
+        'intron_id', 'chromosome', 'start', 'stop', 'length', 'strand', 
+        'intron_rank', 'phase', 'tds', 'up_seq', 'branch_seq', 'down_seq',
+        'full_seq', 'gene_symbol', 'gene_id', 'trans_id', 'cluster_id'
+    ).get(intron_id = input_intron_id)
 
     # create links to the ensembl pages corresponding to the ensembl gene
     # and transcript IDs
-    species = re.sub(' ', '_', info.tax_name) # need the species and genus
+    species = re.sub(' ', '_', info['tax_name']) # need the species and genus
     # names to be separated by an underscore for the ensembl URLs
 
-    if info.com_name in ['Thale', 'Corn', 'Soy', 'Rice']: # ensembl plants
+    if info['com_name'] in ['Thale', 'Corn', 'Soy', 'Rice']: # ensembl plants
         gene_url = 'https://plants.ensembl.org/' + species + \
-        '/Gene/Summary?g=' + info.gene_id
+        '/Gene/Summary?g=' + info['gene_id']
         transcript_url = 'https://plants.ensembl.org/' + species + \
-        '/Transcript/Summary?t=' + info.trans_id
-    elif info.com_name in ['Honeybee', 'Mosquito', 'Anemone']: # metazoa
+        '/Transcript/Summary?t=' + info['trans_id']
+    elif info['com_name'] in ['Honeybee', 'Mosquito', 'Anemone']: # metazoa
         gene_url = 'https://metazoa.ensembl.org/' + species + \
-        '/Gene/Summary?t=' + info.gene_id
+        '/Gene/Summary?t=' + info['gene_id']
         transcript_url = 'https://metazoa.ensembl.org/' + species + \
-        '/Transcript/Summary?t=' + info.trans_id
+        '/Transcript/Summary?t=' + info['trans_id']
     else: # normal ensembl
         gene_url = 'https://ensembl.org/' + species + '/Gene/Summary?g=' + \
-        info.gene_id
+        info['gene_id']
         transcript_url = 'https://ensembl.org/' + species + \
-        '/Transcript/Summary?t=' + info.trans_id
-
+        '/Transcript/Summary?t=' + info['trans_id']
+    
     return render(
         request,
         'results/individual.html',
@@ -318,3 +362,5 @@ def individual(request, input_intron_id): # find all info relating to
             'transcript_url': transcript_url,
         }
     )
+
+

@@ -29,7 +29,7 @@
       {% if field == row.0 %}
       {% else %}
       <td>
-        <a href="{% url 'results:individual' row.0 %}">{{ field }}</a>
+         <a href="{% url 'results:individual' row.0 %}">{{ field }}</a>
       </td>
       {% endif %}
       {% endfor %}

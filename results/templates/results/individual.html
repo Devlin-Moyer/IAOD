@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<center><h2>{{ data.0 }}</h2></center>
+<center><h2>{{ data.short_seq }}</h2></center>
 <br />
 <table class="table">
   <thead>
@@ -13,7 +13,7 @@
   <tbody>
     <tr>
       <td>Taxonomic Name:</td>
-      <td>{{ data.tax_name }}</td>
+      <td><i>{{ data.tax_name }}</i></td>
     </tr>
     <tr>
       <td>Common Name:</td>
@@ -27,7 +27,7 @@
       <td>
         Gene Symbol / Name:<sup>*</sup>
       </td>
-      <td>{{ data.symbol_name }}</td>
+      <td>{{ data.gene_symbol }}</td>
     </tr>
     <tr title="Score indicates how 'U12-like' the intron is. Introns with positive scores are U12-dependent introns.">
       <td>
@@ -41,7 +41,7 @@
     </tr>
     <tr>
       <td>Unique ID:</td>
-      <td>{{ data.id }}</td>
+      <td>{{ data.intron_id }}</td>
     </tr>
   </tbody>
 </table>
