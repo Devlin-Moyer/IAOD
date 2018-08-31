@@ -1,8 +1,9 @@
 from django.shortcuts import render
 from django.db import connection as conn
+from django.contrib.postgres.search import SearchVector, SearchQuery
 import re
-import apsw
 from . import models
+import sys
 
 # dictionary for converting between database column names and user-friendly
 # display names
@@ -78,10 +79,7 @@ def column_name_improvement(column_list, query_text):
 def query_models(filters, genome_list, column_list, query_text):
     # the user entered nothing into any field, so give them all U12s
     if filters == {} and genome_list == []:
-        search_results = models.U12S.objects.filter(genome = 'GRCh38').values(
-            'intron_id', 'genome', 'tax_name', 'gene_symbol', 'tds', 
-            'chromosome', 'start', 'stop'
-        )
+        search_results = models.U12S.objects.filter(genome = 'GRCh38')
         table_rows = QS_to_list(search_results, column_list)
         query_text = 'No search input; showing all U12-dependent introns \
 from human genome hg38 AKA GRCh38. '
@@ -109,17 +107,18 @@ from human genome hg38 AKA GRCh38. '
             table_rows = QS_to_list(search_results, column_list)
         query_text = re.sub(', $', '.', query_text)
         return(table_rows, query_text)
-    # the user wants to find introns from all genomes matching their search terms
+    # the user wants to find introns from all genomes matching their query
     elif filters != {} and genome_list == []:
         # get a list of all the genomes in the database
         cur = conn.cursor()
-        cur.execute('SELECT name FROM sqlite_master WHERE type = "table"')
+        cur.execute('SELECT table_name FROM information_schema.tables WHERE \
+table_schema = \'public\'')
         genome_list = [x[0] for x in cur.fetchall()]
         # drop all of the tables made by django or related to the virtual tables
         # from the list, because those won't have models
         genome_list = [
             i for i in genome_list
-            if not re.search('(orthologs|auth|django|searchable|sqlite|U12s)', i)
+            if not re.search('(orthologs|auth|django|searchable|sqlite|u12s)', i)
         ]
         # then just call this function again using the complete genome list
         return(query_models(filters, genome_list, column_list, query_text))
@@ -147,30 +146,28 @@ def U12_list(request): # parse input from search bar and GET requested info
     # from database
     # get the user query
     user_query = request.GET.get('query')
-    apsw_conn = apsw.Connection('introns.db')
-    cur = apsw_conn.cursor()
-    if user_query is not '': # at the risk of incorrectly interpreting some
-    # search queries, we will simply pass the whole query to fts5
-        cur.execute(f'SELECT intron_id, genome, tax_name, gene_symbol, tds, \
-chromosome, start, stop FROM searchable WHERE searchable MATCH "{user_query}"')
-        search_results = cur.fetchall()
+    if user_query is not '':
+        search_hits = models.U12S.objects.annotate(
+            search = SearchVector(
+                'genome', 'tax_name', 'com_name', 'gene_symbol', 'gene_id',
+                'trans_id', 'tds'
+            )
+        ).filter(search = SearchQuery(user_query))
         return render(
             request,
             'results/U12_list.html',
             {
-                'search_results': search_results,
+                'search_hits': search_hits,
                 'query': 'Showing results for: ' + user_query
             }
         )
     else: # if they submitted a blank query, just give them all human U12s
-        cur.execute('SELECT intron_id, genome, tax_name, gene_symbol, tds, \
-chromosome, start, stop FROM U12s WHERE genome = "GRCh38"')
-        search_results = cur.fetchall()
+        search_hits = models.U12S.objects.filter(genome = 'GRCh38')
         return render(
             request,
             'results/U12_list.html',
             {
-                'search_results': search_results,
+                'search_hits': search_hits,
                 'query': 'No input detected; showing all U12-dependent introns\
  in human genome hg38 AKA GRCh38.'
             }
@@ -307,7 +304,7 @@ def advanced_list(request):
     # at this point, we have everything that we need to render the template
     return render(
         request,
-        'results/main_list.html',
+        'results/advanced_list.html',
         {
             'rows': table_rows,
             'columns': html_columns,
@@ -325,33 +322,28 @@ def individual(request, input_intron_id): # find all info relating to
     # from the SQLite table names, so we must do the same before trying to
     # query a model
     model_name = ''.join([x.title() for x in re.split('_|\.|-', genome)])
-    info = getattr(models, model_name).objects.values(
-        'short_seq', 'tax_name', 'com_name', 'genome', 'score', 'intron_class',
-        'intron_id', 'chromosome', 'start', 'stop', 'length', 'strand', 
-        'intron_rank', 'phase', 'tds', 'up_seq', 'branch_seq', 'down_seq',
-        'full_seq', 'gene_symbol', 'gene_id', 'trans_id', 'cluster_id'
-    ).get(intron_id = input_intron_id)
+    info = getattr(models, model_name).objects.get(intron_id = input_intron_id)
 
     # create links to the ensembl pages corresponding to the ensembl gene
     # and transcript IDs
-    species = re.sub(' ', '_', info['tax_name']) # need the species and genus
+    species = re.sub(' ', '_', info.tax_name) # need the species and genus
     # names to be separated by an underscore for the ensembl URLs
 
-    if info['com_name'] in ['Thale', 'Corn', 'Soy', 'Rice']: # ensembl plants
+    if info.com_name in ['Thale', 'Corn', 'Soy', 'Rice']: # ensembl plants
         gene_url = 'https://plants.ensembl.org/' + species + \
-        '/Gene/Summary?g=' + info['gene_id']
+        '/Gene/Summary?g=' + info.gene_id
         transcript_url = 'https://plants.ensembl.org/' + species + \
-        '/Transcript/Summary?t=' + info['trans_id']
-    elif info['com_name'] in ['Honeybee', 'Mosquito', 'Anemone']: # metazoa
+        '/Transcript/Summary?t=' + info.trans_id
+    elif info.com_name in ['Honeybee', 'Mosquito', 'Anemone']: # metazoa
         gene_url = 'https://metazoa.ensembl.org/' + species + \
-        '/Gene/Summary?t=' + info['gene_id']
+        '/Gene/Summary?t=' + info.gene_id
         transcript_url = 'https://metazoa.ensembl.org/' + species + \
-        '/Transcript/Summary?t=' + info['trans_id']
+        '/Transcript/Summary?t=' + info.trans_id
     else: # normal ensembl
         gene_url = 'https://ensembl.org/' + species + '/Gene/Summary?g=' + \
-        info['gene_id']
+        info.gene_id
         transcript_url = 'https://ensembl.org/' + species + \
-        '/Transcript/Summary?t=' + info['trans_id']
+        '/Transcript/Summary?t=' + info.trans_id
     
     return render(
         request,
@@ -362,5 +354,3 @@ def individual(request, input_intron_id): # find all info relating to
             'transcript_url': transcript_url,
         }
     )
-
-

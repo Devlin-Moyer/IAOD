@@ -9,7 +9,7 @@
 </center>
 <br />
 
-<form method="GET" action="/results/main_list">
+<form method="GET" action="{% url 'results:main_list' %}">
   <div class="form-row">
     <div class="form-group col">
       <label for="tax_name" data-toggle="tooltip">Organism (Genome): <small>(Leave blank to search across all genomes--may take a while)</small></label>

@@ -1,6 +1,7 @@
 # views.py
 from django.shortcuts import render
 from django.db import connection as conn 
+from django.contrib.postgres.search import SearchVector, SearchQuery
 from results import models
 import re
 
@@ -9,7 +10,9 @@ import re
 # search results page
 def organize_sequences(seqs):
     seq = seqs['up_seq'][-15:] + '|' + seqs['short_seq'].split('...')[0] + '...' + \
-        re.sub('[|]', '', seqs['branch_seq']) + '|' + seqs['down_seq'][:15]
+        seqs['branch_seq'] + '|' + seqs['down_seq'][:15]
+    # replace []s in branch_seq with html highlight tags
+    seq = re.sub('\]', '</mark>', re.sub('\[', '<mark>', seq))
     # make list of info for the specified intron
     table_list = [
         seqs['intron_id'], seqs['tax_name'], seqs['gene_symbol'], seq
@@ -41,18 +44,11 @@ def ortholog_list(request):
     # get input intron id and start a list of IDs
     ref_id = request.GET.get('ref_id')
     ortholog_id_list = [ref_id]
-    # escape the intron ID so the @ sign doesn't break the SQL syntax
-    # add all the intron IDs of orthologous introns
-    cur = conn.cursor()
-    cur.execute(f'SELECT cluster FROM orthologs WHERE orthologs MATCH \
-\'"{ref_id}"\'')
-    try:
-        # will get a list containing one string that needs to be split on tabs
-        ortholog_id_list.extend(cur.fetchall()[0][0].rstrip('\n').split('\t'))
-    except IndexError: # not all introns have annotated orthologs
-        return render(request, 'orthologs/list.html', 
-            {'info_list': [get_seqs(ref_id)]}
-        )
+    ids = models.Orthologs.objects.annotate(
+        search = SearchVector('cluster')
+    ).filter(search = SearchQuery(ref_id)).values('cluster')
+    for thing in ids:
+        ortholog_id_list.extend(thing['cluster'].rstrip('\n').split('\t'))
     # drop all the GRCh37 intronIDs that are just duplicates of the GRCh38 IDs
     ortholog_id_list = [x for x in ortholog_id_list 
         if not re.search('GRCh37', x)

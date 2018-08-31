@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.postgres',
     'results',
     'sitepages',
     'orthologs',
@@ -78,8 +79,15 @@ WSGI_APPLICATION = 'intron_website.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': 'introns.db',
+        'ENGINE': 'django.db.backends.postgresql',
+# for testing on laptop
+        'NAME': 'postgres',
+        'USER': 'postgres',
+        'PASSWORD': 'password',
+# for actually running the website
+#        'NAME': '',
+#        'USER': '',
+#        'PASSWORD': '',
     }
 }
 

@@ -5,7 +5,7 @@
 <br /><br /><br /><br />
 <center>
   <h2>U12 Search</h2>
-  <small>Search for U12 introns using simple queries</small>
+  <small>Search for U12-dependent introns using simple queries</small>
   <br /><br />
   <div class="panel panel-default">
     <div class="panel-body">
@@ -23,11 +23,11 @@
       <form method="GET" action="{% url 'results:U12_list' %}">
         <input type="hidden" name="query" value="ATAC Arabidopsis">
         <input type="submit" 
-	value="All ATAC U12 introns in Arabidopsis thaliana">
+	value="All ATAC U12-dependent introns in Arabidopsis thaliana">
       </form>
       <form method="GET" action="{% url 'results:U12_list' %}">
         <input type="hidden" name="query" value="DERL2">
-        <input type="submit" value="All U12 introns in genes named DERL2">
+        <input type="submit" value="All U12-dependent introns in genes named DERL2">
       </form>
     </div>
   </div>

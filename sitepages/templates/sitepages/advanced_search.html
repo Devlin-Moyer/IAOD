@@ -9,13 +9,13 @@
 </center>
 <br />
 
-<form method="GET" action="/results/main_list">
+<form method="GET" action="{% url 'results:advanced_list' %}">
   <div class="form-row">
     <label><strong>Gene Level:</strong></label>
   </div>
   <div class="form-row">
     <div class="form-group col-4">
-      <label for="tax_name" data-toggle="tooltip" title="Leave blank for all organisms.">Organism (Genome):</label>
+      <label for="tax_name" data-toggle="tooltip">Organism (Genome):</label>
       <select class="custom-select" multiple name="tax_name">
         {% for thing in names %}
         <option>{{ thing }}</option>

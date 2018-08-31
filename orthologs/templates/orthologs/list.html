@@ -3,7 +3,10 @@
 {% block content %}
 <br />
 <div>
-  <small>Click on a row to see detailed information about that intron.</small>
+  <p><small>
+    Click on a row to see detailed information about that intron.
+    The putative branch point region is highlighted.
+  </small></p>
 </div>
 
 <table data-toggle="table" data-pagination=true style="font-family:monospace;">
@@ -24,7 +27,7 @@
         <a href="{% url 'results:individual' row.0 %}">{{ row.2 }}</a>
       </td>
       <td>
-        <a href="{% url 'results:individual' row.0 %}">{{ row.3 }}</a>
+        <a href="{% url 'results:individual' row.0 %}">{{ row.3|safe }}</a>
       </td>
     </tr>
     {% endfor %}

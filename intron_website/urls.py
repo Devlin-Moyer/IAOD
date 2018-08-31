@@ -10,7 +10,7 @@ urlpatterns = [
     path('', views.home),
     path('results/', include('results.urls', namespace='results')),
     path('sitepages/', include('sitepages.urls')),
-    path('orthologs/', include('orthologs.urls')),
+    path('orthologs/', include('orthologs.urls', namespace='orthologs')),
 ]
 
 urlpatterns += staticfiles_urlpatterns()

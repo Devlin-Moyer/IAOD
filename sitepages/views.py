@@ -7,15 +7,16 @@ import re
 def get_all_genomes():
     cur = conn.cursor()
     names = []
-    cur.execute('SELECT name FROM sqlite_master WHERE type = "table"')
+    cur.execute('SELECT table_name FROM information_schema.tables WHERE \
+table_schema = \'public\'')
     name_list = [x[0] for x in cur.fetchall()]
-    # drop all of the tables made by django or related to the virtual tables
-    # from the list, because those shouldn't be models
+    # drop all of the tables made by django, the U12 table, and the orthologs
+    # table from the list
     name_list = [
         i for i in name_list 
-        if not re.search('(orthologs|auth|django|searchable|sqlite|U12s)', i)
+        if not re.search('(orthologs|auth|django|u12s)', i)
     ]
-    # find all genomes associated with a particular species
+    # find all corresponding taxonomic names for each genome
     for genome in name_list:
         cur.execute(
             f'SELECT tax_name FROM "{genome}" LIMIT 1'
