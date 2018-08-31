@@ -3,7 +3,7 @@
 # database
 
 import sys
-import apsw
+import sqlite3
 from itertools import islice
 import re
 
@@ -20,12 +20,8 @@ def insert(batch, genome, cur):
         fields = line.rstrip('\n').split('\t')
         # gene id and intron id
         to_insert = [fields[15], fields[3]]
-        # up_seq, short_seq, branch_seq, down_seq
-        seqs = [fields[i] for i in [12, 0, 13, 14]]
-        # only get 5' end of intron from short_seq
-        seqs[1] = seqs[1].split('...')[0]
-        # remove brackets from branch_seq
-        seqs[2] = re.sub('\[|\]', '', seqs[2])
+        # up_seq, down_seq
+        seqs = [fields[i] for i in [12, 14]]
         seqstring = ''.join(seqs)
         to_insert.append(seqstring)
         cur.execute(f'INSERT INTO `{genome}` VALUES (?,?,?)', to_insert)
@@ -36,7 +32,7 @@ genome = sys.argv[1]
 print(f'Populating seqs.db with data from {genome}.')
 
 # get connection to database
-conn = apsw.Connection('seq.db')
+conn = sqlite3.Connection('seq.db')
 cur = conn.cursor()
 
 # remove existing data for this genome assembly and/or create new tables for it
