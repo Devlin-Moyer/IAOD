@@ -19,23 +19,19 @@
 # some hopefully sensible reason, Ensembl has several distinct databases for 
 # their vast collection of genomes. "Popular" organisms like humans, yeast, and
 # fly are in the "default" division, but unpopular animals (mostly insects), 
-# plants, and fungi are relegated to their own divisions. get_gene_symbols and 
-# ortholog_finding both query the Ensembl database backend through an R API, so
-# they have to know which division the genome in question exists in.
+# plants, and fungi are relegated to their own divisions. get_gene_symbols 
+# queries the Ensembl database backend through an R API, so it has to know 
+# which division the genome in question exists in.
 
 # template:
-#srun python3.6 intronIC_devlin.py -nc path/to/whole/genome/fasta path/to/annotation/file name_of_genome_assembly
-# intronIC outputs a lot of extra files that the subsequent programs don't need
+#srun python3.6 intronIC_devlin.py -nc -g path/to/whole/genome/fasta -a path/to/annotation/file -n name_of_genome_assembly
 #srun rm tmp/*
 #srun Rscript get_gene_symbols.R ensembl_division name_of_genome_assembly taxonomic_name
-#srun python3.6 isolate_seqs.py name_of_genome_assembly
-#srun python3.6 ortholog_combinations.py ensembl_division name_of_genome_assembly taxonomic_name
+#srun python3.6 isolate_seqs.py add_new name_of_genome_assembly 
+#srun python3.6 ortholog_combinations.py add_new name_of_genome_assembly
 
-# the ortholog finding program needs to be run by a separate batch script from
-# everything else because it needs all cores from four nodes while everything 
-# else just needs one core. ortholog_combinations.py generates the appropriate
-# batch script that will find orthologs between each individual genome in the
-# database and the genome currently being added
+# ortholog_combinations.py creates another batch script with all the necessary
+# blast commands for finding intron orthologs
 
 #srun Rscript ortholog_clusters.R
 #srun python3.6 ortholog_sql.py
@@ -46,8 +42,12 @@
 module load python/3.6.2
 module load R/3.5.0
 
-srun -n1 python3.6 intronIC_devlin.py -nc /mnt/isilon/data/iGenomes/Xenopus_tropicalis/Ensembl/JGI_4.2/Xenopus_tropicalis.JGI_4.2.dna.toplevel.fa /mnt/isilon/data/iGenomes/Xenopus_tropicalis/Ensembl/JGI_4.2/Xenopus_tropicalis.JGI_4.2.92.gtf JGI_4.2
-srun rm tmp/*
+srun -n1 python3.6 intronIC_devlin.py -nc -na -g /mnt/isilon/data/iGenomes/Xenopus_tropicalis/Ensembl/JGI_4.2/Xenopus_tropicalis.JGI_4.2.dna.toplevel.fa -a /mnt/isilon/data/iGenomes/Xenopus_tropicalis/Ensembl/JGI_4.2/Xenopus_tropicalis.JGI_4.2.92.gtf -n JGI_4.2_cds
+srun -n1 python3.6 intronIC_devlin.py -nc -na -e -g /mnt/isilon/data/iGenomes/Xenopus_tropicalis/Ensembl/JGI_4.2/Xenopus_tropicalis.JGI_4.2.dna.toplevel.fa -a /mnt/isilon/data/iGenomes/Xenopus_tropicalis/Ensembl/JGI_4.2/Xenopus_tropicalis.JGI_4.2.92.gtf -n JGI_4.2_exon
+srun sort -V -k5,6 info/JGI_4.2_cds_info.iic > tmp/JGI_4.2_cds.tsv
+srun sort -V -k5,6 info/JGI_4.2_exon_infoi.iic > tmp/JGI_4.2_exon.tsv
+srun python3.6 noncoding_introns.py JGI_4.2
+#srun rm tmp/*
 srun Rscript get_gene_symbols.R default JGI_4.2 Xenopus_tropicalis
-srun python3.6 isolate_seqs.py JGI_4.2
-srun python3.6 ortholog_combinations.py add_new default JGI_4.2 Xenopus_tropicalis
+srun python3.6 isolate_seqs.py add_new JGI_4.2
+srun python3.6 ortholog_combinations.py add_new JGI_4.2

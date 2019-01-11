@@ -13,7 +13,7 @@ get_dataset <- function(tax_name, type) {
   )
   names <- strsplit(tax_name, "_")[[1]]
   dataset <- paste(
-    paste(tolower(substr(names[1], 0, 1)), names[2], sep = ""),
+    paste(tolower(substr(names[1], 0, 1)), names[2], sep = ""), 
     thing,
     sep = "_"
   )
@@ -24,7 +24,7 @@ get_dataset <- function(tax_name, type) {
 get_gene_ids <- function(genome) {
   gene_ids <- system2(
     "awk",
-    c("'{print $16}'", paste("info/", genome, "_info.iic", sep = "")),
+    c("'{print $15}'", paste("info/", genome, "_info.tsv", sep = "")),
     stdout = TRUE
   )
   return(unique(gene_ids))
@@ -71,8 +71,7 @@ if(!(type %in% c("default", "plants", "fungi", "metazoa", "GRCh37"))) {
 
 cat("Finding gene names in", genome, "using", type, "biomart.\n")
 
-gene_ids <- get_gene_ids(genome)
-write.table(query_biomaRt(tax_name, gene_ids, type),
+write.table(query_biomaRt(tax_name, get_gene_ids(genome), type),
   # make helpful filename for output file
   file = paste("info/", genome, "_gene_symbols.tsv", sep = ""),
   # options to make it easy to parse this file with Python later

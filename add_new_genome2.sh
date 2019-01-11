@@ -7,21 +7,30 @@
 #SBATCH -N1
 #SBATCH --exclusive
 
-module load R/3.5.0
+module load blast/2.7.1
 
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis UMD3.1 Bos_taurus
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis WBcel235 Caenorhabditis_elegans
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis CanFam3.1 Canis_familiaris
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis KH Ciona_intestinalis
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis GRCz11 Danio_rerio
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis BDGP6 Drosophila_melanogaster
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis Galgal5 Gallus_gallus
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis GRCh38 Homo_sapiens
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis Mmul_8.0 Macaca_mulatta
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis monDom5 Monodelphis_domestica
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis GRCm38 Mus_musculus
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis Pan_tro_3.0 Pan_troglodytes
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis Rnor_6.0 Rattus_norvegicus
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis R64-1-1 Saccharomyces_cerevisiae
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis FUGU4 Takifugu_rubripes
-srun Rscript ortholog_finding.R default JGI_4.2 Xenopus_tropicalis TETRAODON8 Tetraodon_rubripes
+srun blastn -query seqs/add_new.fa -subject seqs/UMD3.1.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_UMD3.1.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/WBcel235.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_WBcel235.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/CanFam3.1.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_CanFam3.1.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/KH.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_KH.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/GRCz11.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_GRCz11.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/BDGP6.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_BDGP6.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/Galgal5.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_Galgal5.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/GRCh38.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_GRCh38.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/Mmul_8.0.1.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_Mmul_8.0.1.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/monDom5.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_monDom5.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/GRCm38.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_GRCm38.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/Pan_tro_3.0.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_Pan_tro_3.0.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/Rnor_6.0.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_Rnor_6.0.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/R64-1-1.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_R64-1-1.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/FUGU5.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_FUGU5.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/TETRAODON8.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_TETRAODON8.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/TAIR10.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_TAIR10.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/Gm02.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_Gm02.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/IRGSP-1.0.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_IRGSP-1.0.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/AGPv4.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_AGPv4.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/AgamP4.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_AgamP4.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/Amel_4.5.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_Amel_4.5.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/WBcel235.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_WBcel235.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/R64-1-1.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_R64-1-1.tsv
+srun blastn -query seqs/add_new.fa -subject seqs/ASM294v2.fa -outfmt 6 | awk '$11 < 1e-10 {print $1"\t"$2}' > ortholog_lists/add_new_ASM294v2.tsv
