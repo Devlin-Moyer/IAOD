@@ -29,9 +29,9 @@
       </td>
       <td>{{ data.gene_symbol }}</td>
     </tr>
-    <tr title="Score indicates how 'U12-like' the intron is. Introns with positive scores are U12-dependent introns.">
+    <tr title="The larger the score, the more U12-like the intron, with 0 as the cutoff between U12-dependent and U2-dependent introns.">
       <td>
-        Score:<sup>*</sup>
+        U12-Score:<sup>*</sup>
       </td>
       <td>{{ data.score }}</td>
     </tr>
@@ -103,8 +103,8 @@
       <td>Downstream Exonic Sequence:</td>
       <td>{{ data.down_seq }}</td>
     </tr>
-    <tr title="The 3' end of the intron with the most probable branch point site enclosed by square brackets.">
-      <td>Branch point region:*</td>
+    <tr>
+      <td>Putative branch point region:</td>
       <td>{{ data.branch_seq }}</td>
     </tr>
     <tr>

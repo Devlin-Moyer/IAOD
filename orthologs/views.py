@@ -9,10 +9,7 @@ import re
 # appropriate sequences in the appropriate order for display on the ortholog
 # search results page
 def organize_sequences(seqs):
-    seq = seqs['up_seq'][-15:] + '|' + seqs['short_seq'].split('...')[0] + '...' + \
-        seqs['branch_seq'] + '|' + seqs['down_seq'][:15]
-    # replace []s in branch_seq with html highlight tags
-    seq = re.sub('\]', '</mark>', re.sub('\[', '<mark>', seq))
+    seq = seqs['up_seq'][-15:] + '|' + seqs['short_seq'] + '|' + seqs['down_seq'][0:15]
     # make list of info for the specified intron
     table_list = [
         seqs['intron_id'], seqs['tax_name'], seqs['gene_symbol'], seq
@@ -24,7 +21,7 @@ def organize_sequences(seqs):
 def get_seqs(input_intron_id):
     # the name of the assembly a given intron is from is in the first part of
     # the intronIC ID, so we need to extract that for the model query
-    genome = re.search('(.+)\-\w+\d+@', input_intron_id).group(1)
+    genome = re.search('(.+)_(cds|exon)', input_intron_id).group(1)
 
     # Django makes pretty model names by using title() and removing _ - and .
     # from the SQLite table names, so we must do the same before trying to
@@ -49,13 +46,10 @@ def ortholog_list(request):
     ).filter(search = SearchQuery(ref_id)).values('cluster')
     for thing in ids:
         ortholog_id_list.extend(thing['cluster'].rstrip('\n').split('\t'))
-    # drop all the GRCh37 intronIDs that are just duplicates of the GRCh38 IDs
-    ortholog_id_list = [x for x in ortholog_id_list 
-        if not re.search('GRCh37', x)
-    ]
     # start a list of intron info to pass to the template
     info_list = []
     # get the sequences for all of the introns
     for ortholog_id in ortholog_id_list:
         info_list.append(get_seqs(ortholog_id))
+    q
     return render(request, 'orthologs/list.html', {'info_list': info_list})

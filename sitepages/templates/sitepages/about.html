@@ -12,7 +12,7 @@
     Brief background information and descriptions of the inner workings of the
     database can be found in the headings below; for thorough information on 
     how the website works and why it was made, see the paper at (insert link
-    here).
+    to paper).
   </p>
   <div id="accordion">
     <div class="card">
@@ -108,10 +108,9 @@
 	    position-weight matrix developed from consensus U12-dependent 
 	    introns and assigning each intron a score quantifying its distance
 	    from the consensus U12 5' splice site and branch-point sequences. 
-	    For a detailed description of how intronIC works, see (link to 
-	    Graham's paper and/or intronIC's github page here, once either of
-	    those exist). The whole-genome FASTA and gtf files used as input 
-	    to intronIC were downloaded from the Ensembl ftp servers for the
+	    For a detailed description of how intronIC works, see (insert link
+            to paper). The whole-genome FASTA and gtf files used as input to 
+            intronIC were downloaded from the Ensembl ftp servers for the
 	    latest releases of each division (Ensembl release 93 and Ensembl
 	    Plants, Fungi, and Metazoa release 39).
 	  </p>
@@ -120,8 +119,9 @@
 	    obtain gene symbols for every intron represented in the database.
 	    A custom Python script then combined the output of intronIC, the
 	    list of gene symbols, and the list of orthologous clusters 
-	    (described in the "Ortholog Search Engine" section below) into an
-	    <a href="https://www.sqlite.org/index.html">SQLite</a> database.
+	    (described in the "Ortholog Search Engine" section below) into a
+	    <a href="https://www.postgresql.org/docs/10/static/index.html">
+            PostgreSQL</a> database.
 	  </p>
         </div>
       </div>
@@ -193,22 +193,23 @@
       data-parent="#accordion">
         <div class="card-body">
           <p>
-            The ortholog search engine searches a distinct table in the SQLite
-	    database that contains two columns: a unique integer ortholog 
-	    cluster ID and a list of intron IDs belonging to that ortholog
-	    cluster. Pairs of orthologous introns were determined by reciprocal
-	    pairwise alignment of all introns in two orthologous genes (as 
-	    annotated by Ensembl). Once the list of orthologous intron pairs 
-	    was created, this list was used as an edge set to create a graph of
-	    orthologous relationships in which every vertex represents an 
-	    intron and an edge between two vertices represents an orthologous 
-	    relationship. This graph consists of a large number of disjoint
-	    components, with each component representing a group of orthologous
-	    genes. Each component was assigned a number and the list of intron 
-	    IDs associated with each number was used to create the SQLite 
-	    table. For an introduction to basic concepts and terminology in
-	    graph theory, see Chartrand and Zhang, A First Course in Graph 
-	    Theory (ISBN-10: 0486483681, ISBN-13: 978-0486483689). 
+            The ortholog search engine searches a distinct table in the 
+            PostgreSQL database that contains two columns: a unique integer
+            ortholog cluster ID and a list of intron IDs belonging to that 
+            ortholog cluster. Pairs of orthologous introns were determined by
+            reciprocal pairwise alignment of all introns in two orthologous 
+            genes (as annotated by Ensembl). Once the list of orthologous 
+            intron pairs was created, this list was used as an edge set to 
+            create a graph of orthologous relationships in which every vertex
+            represents an intron and an edge between two vertices represents an
+            orthologous relationship. This graph consists of a large number of
+            disjoint components, with each component representing a group of
+            orthologous genes. Each component was assigned a number and the 
+            list of intron IDs associated with each number was used to create
+            the PostgreSQL table. For an introduction to basic concepts and 
+            terminology in graph theory, see Chartrand and Zhang, A First
+            Course in Graph Theory (ISBN-10: 0486483681, ISBN-13: 
+            978-0486483689). 
 	  </p>
 	  <p>
 	    Users can use either an ortholog cluster ID or an intron ID 
@@ -243,21 +244,14 @@
           <p>
             The U12 search engine provides a simple search interface for 
 	    searching only the U12-dependent introns contained within the 
-	    database. The search engine takes whatever text the user inputs 
-	    as a single string and compares it to every record of a 
-	    U12-dependent intron, considering each record as a string (i.e.
-	    it executes a fulltext search against the table in the SQLite 
-	    database containing annotation information for only U12-dependent
-	    introns). E.g. a single intron in the Arabidopsis genome is listed
-	    as being in the gene <i>ARV1</i>, so the search engine creates the
-	    string "Arabidopsis thaliana Thale cress TAIR10 ARV1 ..." and 
-	    compares the search query submitted by the user (with some 
-	    tolerance for inexact matching) to that string. All of this 
-	    coercion and comparison is done by the fts5 extension of SQLite. 
-	    Consequently, the U12 search engine returns no results if a list of
-	    gene names is submitted, since no single record contains the names 
-	    of multiple genes. While this does limit the utility of the U12 
-	    search engine, it allows the user-interface to be very simple.
+	    database. The search engine conducts full text searches against
+            only the genome assembly name, taxonomic name, common name, gene
+            symbol, Ensembl gene ID, Ensembl transcript ID, and terminal
+            dinucleotides columns of a table containing all U12-dependent
+            introns in the database. For details about how PostgreSQL full text
+            search queries work, see the documentation <a href=
+            "https://www.postgresql.org/docs/10/static/textsearch.html">here
+            </a>
           </p>
         </div>
       </div>

@@ -15,10 +15,10 @@
   </div>
   <div class="form-row">
     <div class="form-group col-4">
-      <label for="tax_name" data-toggle="tooltip">Organism (Genome):</label>
-      <select class="custom-select" multiple name="tax_name">
-        {% for thing in names %}
-        <option>{{ thing }}</option>
+      <label for="genome" data-toggle="tooltip">Organism (Genome): <small>(Leave blank to search across all genomes--may take a while)</small></label>
+      <select multiple class="form-control" name="genome">
+        {% for individual in names %}
+        <option>{{ individual }}</option>
         {% endfor %}
       </select>
     </div>
@@ -28,7 +28,7 @@
     </div>
     <div class="col">
       <label>Ensembl Transcript ID:</label>
-      <input class="form-control" type="text" name="trans_ID">
+      <input class="form-control" type="text" name="trans_id">
     </div>
     <div class="col">
       <label>Gene Symbol:</label>
@@ -43,10 +43,10 @@
       <label data-toggle="tooltip" title="Searching across more than just U12 introns may take much longer.">
         Intron Class:
       </label>
-      <select class="form-control" name="intron_class" data-toggle="tooltip" title="Searching across more than just U12 introns may take much longer.">
+      <select class="form-control" name="intron_class" data-toggle="tooltip" title="Searching across more than just U12-dependent introns may take much longer.">
         <option value=""></option>
-        <option value="U12-Dependent/Minor">U12-Dependent</option>
-        <option value="U2-Dependent/Major">U2-Dependent</option>
+        <option value="U12-Dependent">U12-Dependent</option>
+        <option value="U2-Dependent">U2-Dependent</option>
 	<option value="">Both</option>
       </select>
     </div>

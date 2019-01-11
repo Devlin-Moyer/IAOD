@@ -11,9 +11,9 @@
 
 <form method="GET" action="{% url 'results:main_list' %}">
   <div class="form-row">
-    <div class="form-group col">
-      <label for="tax_name" data-toggle="tooltip">Organism (Genome): <small>(Leave blank to search across all genomes--may take a while)</small></label>
-      <select class="custom-select" multiple name="genome">
+    <div class="col">
+      <label for="genome" data-toggle="tooltip">Organism (Genome): <small>(Leave blank to search across all genomes--may take a while)</small></label>
+      <select multiple class="form-control" name="genome">
         {% for individual in names %}
         <option>{{ individual }}</option>
         {% endfor %}
@@ -31,7 +31,7 @@
     </div>
     <div class="col">
       <label>Ensembl Transcript ID:</label>
-      <input class="form-control" type="text" name="trans_ID">
+      <input class="form-control" type="text" name="trans_id">
     </div>
     <div class="form-group col">
       <label data-toggle="tooltip">
@@ -103,7 +103,6 @@
             <label class="form-check-label">Ensembl Transcript ID</label>
 	</td>
       </tr>
-
       <tr>
         <td>
           <div class="form-check">

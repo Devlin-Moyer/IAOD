@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.db import connection as conn
 from django.contrib.postgres.search import SearchVector, SearchQuery
+from django.db.models import Q
 import re
 from . import models
 import sys
@@ -71,15 +72,16 @@ def column_name_improvement(column_list, query_text):
             'Stop'
         ]
         # always nice to let the user know what we're doing
-        query_text += '\nNo columns specified; showing default columns.'
+        query_text += '; showing default columns'
         return(column_list, html_columns, query_text)
 
 # execute SQL queries to get data; takes query_text as input just in case the
 # user didn't specify any search terms
-def query_models(filters, genome_list, column_list, query_text):
-    # the user entered nothing into any field, so give them all U12s
-    if filters == {} and genome_list == []:
-        search_results = models.U12S.objects.filter(genome = 'GRCh38')
+def query_models(filters, gene_names, genome_list, column_list, query_text):
+    # the user entered nothing into any field, so give them all human U12s
+    if filters == {} and genome_list == [] and gene_names == Q():
+        search_results = models.U12S.objects.filter(genome = 'GRCh38')\
+        .values(*column_list)
         table_rows = QS_to_list(search_results, column_list)
         query_text = 'No search input; showing all U12-dependent introns \
 from human genome hg38 AKA GRCh38. '
@@ -89,7 +91,7 @@ from human genome hg38 AKA GRCh38. '
         # of lists and concatenate those lists into one comprehensive list of 
         # lists to pass on to the template
     # the user only chose a genome or list thereof but had no other search terms
-    elif filters == {} and genome_list != []:
+    elif filters == {} and genome_list != [] and gene_names == Q():
         query_text += ' in '
         for genome in genome_list:
             # add list of genomes to query_text
@@ -108,7 +110,7 @@ from human genome hg38 AKA GRCh38. '
         query_text = re.sub(', $', '.', query_text)
         return(table_rows, query_text)
     # the user wants to find introns from all genomes matching their query
-    elif filters != {} and genome_list == []:
+    elif genome_list == []:
         # get a list of all the genomes in the database
         cur = conn.cursor()
         cur.execute('SELECT table_name FROM information_schema.tables WHERE \
@@ -122,8 +124,10 @@ table_schema = \'public\'')
         ]
         # then just call this function again using the complete genome list
         return(query_models(filters, genome_list, column_list, query_text))
-    # the user input a "normal" query with some genomes and some other criteria
+    # the user picked some genomes and/or some filters but no gene names
+    # the user picked some genomes, a gene name or two, and some other filters
     else:
+        table_rows = []
         query_text += ' in '
         for genome in genome_list:
             query_text += f'{genome}, '
@@ -134,9 +138,11 @@ table_schema = \'public\'')
             )
             # run the SQL query over as many tables as is appropriate
             search_results = getattr(models, model_name)\
-                .objects.filter(**filters).values(*column_list)
+                .objects.filter(**filters)\
+                .filter(gene_names)\
+                .values(*column_list)
             # turn the QuerySet into a list of lists
-            table_rows = QS_to_list(search_results, column_list)
+            table_rows.extend(QS_to_list(search_results, column_list))
         query_text = re.sub(', $', '.', query_text)
         return(table_rows, query_text)
 
@@ -181,30 +187,51 @@ def main_list(request):
     # above the table
     query_strings = []
     # store all of their search terms in a dictionary to kwargs into a model
-    # query
+    # query, except for gene_symbol; since they might 
+    # specify lists of those, we need to create Q objects for those so that
+    # we can or together the different elements of those lists (i.e. make it
+    # so that we say gene_symbol__icontains x OR y instead of x AND y--normal
+    # QuerySet filters will AND everything together by default)
     filters = {}
+    gene_names = Q()
     # make a list of what genomes to query, since that determines what tables
-    # we will be searching
-    genome_list = []
+    # we will be searching. Need to get just the genome and not the tax name or
+    # the parentheses, hence the regex. In order to get the entire list of
+    # genomes that they specified, we need to use the getlist() method;
+    # .items() only returns a single string for each key, for some reason
+    genome_list = [
+        re.search('\((.+)\)$', x).group(1) 
+        for x in request.GET.getlist('genome')
+    ]
     for field in request.GET.items():
         if 'y_' in field[0]: # anything prefixed with y_ is a field the
             # user wants shown in the results table
             column_list.append(field[0].lstrip('y_'))
         elif field[1] == '': # skip over fields that had no user input
             pass
-        elif field[0] == 'genome': # since the search page input looks like
-            # tax_name (genome), we need a regex
-            genome = re.search('\((.+)\)$', field[1]).group(1)
-            genome_list.append(genome)
+        elif field[0] == 'genome': # we already dealt with the genomes
+            pass
+        elif field[0] == 'gene_symbol': 
+             # we want users to be able to provide lists of genes so we need
+             # to split that on commas in case they did provide a list and then
+             # make it into a Q object with each gene name OR'd together
+            terms = re.split(',\ ?', field[1])
+            # the regex allows us to handle comma-separated lists that may or
+            # may not have spaces
+            query_strings.append(column_names[field[0]] + ' = ')
+            for term in terms:
+                gene_names |= Q(gene_symbol__icontains=term)
+                # add to string describing user input
+                query_strings.append(term + ' or ')
+            query_strings[-1] = query_strings[-1].rstrip(' or ')
         else: # everything else should be a simple queryset filter
             # add to the dictionary
             filters[field[0] + '__icontains'] = field[1]
             # add to string describing user input
-            query_strings.append(column_names[field[0]] + ' = ' + \
-            field[1])
-
+            query_strings.append(column_names[field[0]] + ' = ' + field[1])
     # make a nice string to display on the results page
     query_text = 'Showing results for: ' + ', '.join(query_strings)
+    query_text = re.sub('= ,', '= ', query_text)
 
     # need to pass query text and return column_list in case the user didn't
     # input any columns in their selection and we gave them default options
@@ -216,9 +243,8 @@ def main_list(request):
     # list of lists for the template; if there's no input, modifies query_text
     # appropriately, and adds genomes otherwise
     (table_rows, query_text) = query_models(
-        filters, genome_list, column_list, query_text
+        filters, gene_names, genome_list, column_list, query_text
     )
-
     # at this point, we have everything that we need to render the template
     return render(
         request,
@@ -232,17 +258,22 @@ def main_list(request):
 
 def advanced_list(request):
     # no matter what, we need to get the id of every intron returned from 
-    # every query so that we can make links to the individual view page
+    # every query so that we can make links to the individual view pages
     column_list = ['intron_id']
     # make a list of all of their search criteria to make a string to appear
     # above the table
     query_strings = []
     # store all of their search terms in a dictionary to kwargs into a model
-    # query
+    # query, except for gene names / symbols, which get stored in a Q object
+    # so that the individual gene names are OR'd together instead of AND'd
     filters = {}
+    gene_names = Q()
     # make a list of what genomes to query, since that determines what tables
     # we will be searching
-    genome_list = []
+    genome_list = [
+        re.search('\((.+)\)$', x).group(1) 
+        for x in request.GET.getlist('genome')
+    ]
     modifiers = [] # for >, <, and between (x,y) queries
     for field in request.GET.items():
         if 'y_' in field[0]: # anything prefixed with y_ is a field the
@@ -253,9 +284,21 @@ def advanced_list(request):
         elif '__' in field[0]: # anything with a __ is a greater than, less
             # than, or between modifier for one of the numeric fields
             modifiers.append(field[0])
-        elif field[0] == 'genome':
-            genome = re.search('\((.+)\)$', field[1]).group(1)
-            genome_list.append(genome)
+        elif field[0] == 'genome': # already made genome list above
+            pass
+        elif field[0] == 'gene_symbol': 
+             # we want users to be able to provide lists of genes so we need
+             # to split that on commas in case they did provide a list and then
+             # make it into a Q object with each gene name OR'd together
+            terms = re.split(',\ ?', field[1])
+            # the regex allows us to handle comma-separated lists that may or
+            # may not have spaces
+            query_strings.append(column_names[field[0]] + ' = ')
+            for term in terms:
+                gene_names |= Q(gene_symbol__icontains=term)
+                # add to string describing user input
+                query_strings.append(term + ' or ')
+            query_strings[-1].rstrip(' or ')
         else: # everything else should be a simple queryset filter
             # add to the dictionary
             filters[field[0] + '__icontains'] = field[1]
@@ -271,8 +314,8 @@ def advanced_list(request):
         mod_field, mod_type = mod.split('__')
         # now find the corresponding field and replace it. To continue the 
         # example, now filters needs to contain start__gt instead of start
-        filters[mod] = filters.pop(mod_field) # this keeps start__gt paired
-        # with the user's input- it just changes the key
+        filters[mod] = filters.pop(mod_field + '__icontains') # this keeps 
+        # start__gt paired with the user's input- it just changes the key
 
         # we also need to change the corresponding string in query_strings,
         # since it currently says start = x and should say start > x
@@ -286,7 +329,7 @@ def advanced_list(request):
 
     # make a nice string to display on the results page
     query_text = 'Showing results for: ' + ', '.join(query_strings) + '. '
-
+    query_text = re.sub('= ,', '= ', query_text)
     # need to pass query text and return column_list in case the user didn't
     # input any columns in their selection and we gave them default options
     (column_list, html_columns, query_text) = column_name_improvement(
@@ -298,13 +341,12 @@ def advanced_list(request):
     # list of lists for the template; if there's no output, modifies query_text
     # appropriately, and leaves it unchanged otherwise
     (table_rows, query_text) = query_models(
-        filters, genome_list, column_list, query_text
+        filters, gene_names, genome_list, column_list, query_text
     )
-
     # at this point, we have everything that we need to render the template
     return render(
         request,
-        'results/advanced_list.html',
+        'results/main_list.html',
         {
             'rows': table_rows,
             'columns': html_columns,
@@ -316,7 +358,7 @@ def individual(request, input_intron_id): # find all info relating to
     # single intron chosen from results page
     # the name of the assembly a given intron is from is in the first part of
     # the intronIC ID, so we need to extract that for the model query
-    genome = re.match('^(.+)-\w+@\w+', input_intron_id).group(1)
+    genome = re.match('^(.+)_(cds|exon)', input_intron_id).group(1)
 
     # Django makes pretty model names by using title() and removing _ - and .
     # from the SQLite table names, so we must do the same before trying to
