@@ -72,7 +72,7 @@ def column_name_improvement(column_list, query_text):
             'Stop'
         ]
         # always nice to let the user know what we're doing
-        query_text += '; showing default columns'
+        query_text += ' Showing default columns'
         return(column_list, html_columns, query_text)
 
 # execute SQL queries to get data; takes query_text as input just in case the
@@ -123,7 +123,7 @@ table_schema = \'public\'')
             if not re.search('(orthologs|auth|django|searchable|sqlite|u12s)', i)
         ]
         # then just call this function again using the complete genome list
-        return(query_models(filters, genome_list, column_list, query_text))
+        return(query_models(filters, gene_names, genome_list, column_list, query_text))
     # the user picked some genomes and/or some filters but no gene names
     # the user picked some genomes, a gene name or two, and some other filters
     else:
@@ -224,6 +224,10 @@ def main_list(request):
                 # add to string describing user input
                 query_strings.append(term + ' or ')
             query_strings[-1] = query_strings[-1].rstrip(' or ')
+        elif field[0] == 'tds': # add a hyphen if necessary
+            if len(field[1]) == 4:
+                field[1] = field[1][0:2] + '-' + field[1][2:]
+            filters['tds_icontains'] = field[1]
         else: # everything else should be a simple queryset filter
             # add to the dictionary
             filters[field[0] + '__icontains'] = field[1]
