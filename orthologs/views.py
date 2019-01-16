@@ -51,5 +51,4 @@ def ortholog_list(request):
     # get the sequences for all of the introns
     for ortholog_id in ortholog_id_list:
         info_list.append(get_seqs(ortholog_id))
-    q
     return render(request, 'orthologs/list.html', {'info_list': info_list})
