@@ -29,10 +29,10 @@ for name in names:
     open(f'static/fasta/{name}_U12.fasta', 'w') as fasta_U12, \
     open(f'static/fasta/{name}_U2.fasta', 'w') as fasta_U2:
         cur.execute(f'SELECT intron_id,tax_name,chromosome,strand,start,stop,\
-length,phase,intron_rank FROM "{name}" WHERE score > 0')
+length,phase,intron_rank,full_seq FROM "{name}" WHERE score > 0')
         U12_fasta = cur.fetchall()
         cur.execute(f'SELECT intron_id,tax_name,chromosome,strand,start,stop,\
-length,phase,intron_rank FROM "{name}" WHERE score <= 0')
+length,phase,intron_rank,full_seq FROM "{name}" WHERE score <= 0')
         U2_fasta = cur.fetchall()
         cur.execute(f'SELECT chromosome,start,stop,intron_id,score,strand \
 FROM "{name}" WHERE score > 0')
@@ -41,10 +41,16 @@ FROM "{name}" WHERE score > 0')
 FROM "{name}" WHERE score <= 0')
         U2_bed = cur.fetchall()
         for row in U12_fasta:
-            line = '\t'.join([str(x) for x in row])
+            row = [str(x) for x in row]
+            line = '>' + row[0] + '|' + row[1] + '|' + row[2] + '|' + row[3] +\
+'|' + row[4] + '|' + row[5] + '|' + row[6] + '|' + row[7] + '|' + row[8] + \
+'\n' + row[9]
             fasta_U12.write(f'{line}\n')
         for row in U2_fasta:
-            line = '\t'.join([str(x) for x in row])
+            row = [str(x) for x in row]
+            line = '>' + row[0] + '|' + row[1] + '|' + row[2] + '|' + row[3] +\
+'|' + row[4] + '|' + row[5] + '|' + row[6] + '|' + row[7] + '|' + row[8] + \
+'\n' + row[9]
             fasta_U2.write(f'{line}\n')
         for row in U12_bed:
             line = '\t'.join([str(x) for x in row])
