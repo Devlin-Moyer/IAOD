@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<br />
+<center>
+  <h2>Main Search</h2>
+  <small>Search all introns in database</small>
+</center>
+<br />
+
+<form method="GET" action="{% url 'results:main_list' %}">
+  <div class="form-row">
+    <div class="col">
+      <label for="genome" data-toggle="tooltip">Organism (Genome): <small>(Leave blank to search across all genomes--may take a while)</small></label>
+      <select multiple class="form-control" name="genome">
+        {% for individual in names %}
+        <option>{{ individual }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col">
+      <label>Gene Symbol:</label>
+      <input class="form-control" type="text" name="gene_symbol">
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="col">
+      <label>Ensembl Gene ID:</label>
+      <input class="form-control" type="text" name="gene_id">
+    </div>
+    <div class="col">
+      <label>Ensembl Transcript ID:</label>
+      <input class="form-control" type="text" name="trans_id">
+    </div>
+    <div class="form-group col">
+      <label data-toggle="tooltip">
+        Intron Class:
+      </label>
+      <select class="form-control" name="intron_class" data-toggle="tooltip">
+        <option value=""></option>
+        <option value="U12-Dependent">U12-Dependent</option>
+        <option value="U2-Dependent">U2-Dependent</option>
+	<option value="">Both</option>
+      </select>
+    </div>
+    <div class="form-group col">
+      <label data-toggle="tooltip"
+      title="Usually GT-AG or AT-AC; others are extremely rare">
+        Terminal Dinucleotides:
+      </label>
+      <input class="form-control" type="text" name="tds" maxlength="5"
+      data-toggle="tooltip"
+      title="Usually GT-AG or AT-AC; others are extremely rare">
+    </div>
+  </div>
+  <br />
+  <table class="table">
+    <thead>
+      <tr>
+        <strong>Fields to display in result:</strong>
+      </tr>
+      <tr><small> (Leave blank for default columns)</small></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_tax_name">
+            <label class="form-check-label">Taxonomic Name</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_com_name">
+            <label class="form-check-label">Common Name</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_genome">
+            <label class="form-check-label">Genome Assembly</label>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" 
+	    name="y_gene_symbol">
+	    <label class="form-check-label">Gene Name</label>
+	  </div>
+	</td>
+	<td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_gene_id">
+            <label class="form-check-label">Ensembl Gene ID</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_trans_id">
+            <label class="form-check-label">Ensembl Transcript ID</label>
+	</td>
+      </tr>
+      <tr>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox"
+            name="y_intron_class">
+            <label class="form-check-label">Class</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_tds">
+            <label class="form-check-label">Terminal Dinucleotides</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_short_seq">
+            <label class="form-check-label">Abbreviated Sequence</label>
+          </div>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_chromosome">
+            <label class="form-check-label">Chromosome</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_start">
+            <label class="form-check-label">Start</label>
+          </div>
+        </td>
+        <td>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" name="y_stop">
+            <label class="form-check-label">Stop</label>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <button type="submit" class="btn btn-primary">Search</button>
+</form>
+<br />
+<br />
+
+{% endblock %}

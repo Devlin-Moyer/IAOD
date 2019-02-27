@@ -25,7 +25,11 @@
 
 # template:
 #srun python3.6 intronIC_devlin.py -nc -g path/to/whole/genome/fasta -a path/to/annotation/file -n name_of_genome_assembly
+<<<<<<< HEAD
 #srun python3.6 deduplicate.py name_of_genme_assembly
+=======
+#srun rm tmp/*
+>>>>>>> 59179440ead6c3e9d32b5797311ca76b48343ddf
 #srun Rscript get_gene_symbols.R ensembl_division name_of_genome_assembly taxonomic_name
 #srun python3.6 isolate_seqs.py add_new name_of_genome_assembly 
 #srun python3.6 ortholog_combinations.py add_new name_of_genome_assembly
@@ -44,7 +48,14 @@ module load R/3.5.0
 
 srun -n1 python3.6 intronIC_devlin.py -nc -na -g /mnt/isilon/data/iGenomes/Xenopus_tropicalis/Ensembl/JGI_4.2/Xenopus_tropicalis.JGI_4.2.dna.toplevel.fa -a /mnt/isilon/data/iGenomes/Xenopus_tropicalis/Ensembl/JGI_4.2/Xenopus_tropicalis.JGI_4.2.92.gtf -n JGI_4.2_cds
 srun -n1 python3.6 intronIC_devlin.py -nc -na -e -g /mnt/isilon/data/iGenomes/Xenopus_tropicalis/Ensembl/JGI_4.2/Xenopus_tropicalis.JGI_4.2.dna.toplevel.fa -a /mnt/isilon/data/iGenomes/Xenopus_tropicalis/Ensembl/JGI_4.2/Xenopus_tropicalis.JGI_4.2.92.gtf -n JGI_4.2_exon
+<<<<<<< HEAD
 srun python3.6 deduplicate.py JGI_4.2
+=======
+srun sort -V -k5,6 info/JGI_4.2_cds_info.iic > tmp/JGI_4.2_cds.tsv
+srun sort -V -k5,6 info/JGI_4.2_exon_infoi.iic > tmp/JGI_4.2_exon.tsv
+srun python3.6 noncoding_introns.py JGI_4.2
+#srun rm tmp/*
+>>>>>>> 59179440ead6c3e9d32b5797311ca76b48343ddf
 srun Rscript get_gene_symbols.R default JGI_4.2 Xenopus_tropicalis
 srun python3.6 isolate_seqs.py add_new JGI_4.2
 srun python3.6 ortholog_combinations.py add_new JGI_4.2

@@ -1,0 +1,102 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+{% load static %}
+<br /><br />
+
+<div id="accordion">
+  <div class="card">
+    <div class="card-header" id="FastaHeader">
+      <h4>
+        <button class="btn btn-link" data-toggle="collapse" data-target="#FastaFiles" aria-expanded="false" aria-controls="FastaFiles">
+          FASTA Files
+	</button>
+      </h4>
+    </div>
+    <div id="FastaFiles" class="collapse" aria-labelledby="FastaHeader" data-parent="#accordion">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <td colspan=2>
+                Header contents: >intron id|taxonomic name|chr|strand|start|stop|length|phase|rank
+              </td>
+            </tr>
+            <tr>
+              <td>U12 Introns</td>
+              <td>U2 Introns</td>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in list %}
+            <tr>
+              {% with 'fasta/'|add:item.1|add:'_U12.fasta' as file_path %}
+              <td>
+                <a href="{% static file_path %}">
+                  {{ item.0 }}
+                </a>
+              {% endwith %}
+              </td>
+              <td>
+              {% with 'fasta/'|add:item.1|add:'_U2.fasta' as file_path %}
+                <a href="{% static file_path %}">
+                  {{ item.0 }}
+                </a>
+              </td>
+              {% endwith %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-header" id="BedHeader">
+      <h4>
+        <button class="btn btn-link" data-toggle="collapse" data-target="#BedFiles" aria-expanded="false" aria-controls="BedFiles">
+          BED Files
+	</button>
+      </h4>
+    </div>
+    <div id="BedFiles" class="collapse" aria-labelledby="BedHeader" data-parent="#accordion">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <td colspan=2>
+                BED 6 columns: chr, start, stop, intron id, score, strand
+              </td>
+            </tr>
+            <tr>
+              <td>U12 Introns</td>
+              <td>U2 Introns</td>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in list %}
+            <tr>
+              {% with 'bed/'|add:item.1|add:'_U12.bed' as file_path %}
+              <td>
+                <a href="{% static file_path %}">
+                  {{ item.0 }}
+                </a>
+              {% endwith %}
+              </td>
+              <td>
+              {% with 'bed/'|add:item.1|add:'_U2.bed' as file_path %}
+                <a href="{% static file_path %}">
+                  {{ item.0 }}
+                </a>
+              </td>
+              {% endwith %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

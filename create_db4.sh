@@ -13,6 +13,7 @@ srun Rscript ortholog_clusters.R
 # for mysterious reasons, some "clusters" have only one intron in them
 srun awk 'NF > 1 {print}' extra_clusters.txt > clusters.txt
 srun rm extra_clusters.txt
+<<<<<<< HEAD
 srun python3.6 ortholog_sql.py
 
 # cannot run this part in parallel because they all write to the database, so
@@ -46,3 +47,5 @@ srun python3.6 reformatting.py AGPv4 Zea_mays Corn
 # now that the database is created, there is no need for anything in info
 #srun rm info/*
 
+=======
+>>>>>>> 59179440ead6c3e9d32b5797311ca76b48343ddf

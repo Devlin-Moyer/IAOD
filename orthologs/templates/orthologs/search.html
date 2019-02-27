@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends 'base.html' %}
 
 {% block content %}
@@ -23,3 +24,30 @@
 </center>
 
 {% endblock %}
+=======
+{% extends 'base.html' %}
+
+{% block content %}
+
+<center>
+  <br /><br /><br /><br />
+  <h2>Ortholog Search</h2>
+  <br />
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <p>
+        Use an individual intron's unique ID to see its sequence side-by-side with
+        the sequences of all of the orthologous introns in every other 
+        genome in the database.
+      </p>
+      <form class="form-inline justify-content-center" method="GET" action="/orthologs/list">
+        <input type="text" name="ref_id" size=70 
+        placeholder="Input a single intron ID for any intron in the database.">
+        <input type="submit" value="Search">
+      </form>
+    </div>
+  </div>
+</center>
+
+{% endblock %}
+>>>>>>> 59179440ead6c3e9d32b5797311ca76b48343ddf
