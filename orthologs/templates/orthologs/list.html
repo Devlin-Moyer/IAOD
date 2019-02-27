@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<br />
+<div>
+  <p><small>
+    Click on a row to see detailed information about that intron.
+    The splice sites are marked with vertical bars and the putative branch point sequence is in between the ellipses.
+  </small></p>
+</div>
+
+<table data-toggle="table" data-pagination=true style="font-family:monospace;">
+  <thead>
+    <tr>
+      <th data-sortable="true" data-sorter="alphanum1">Taxonomic Name</th>
+      <th data-sortable="true" data-sorter="alphanum1">Gene Name</th>
+      <th data-sortable="true" data-sorter="alphanum1">Sequence</th>
+    </tr>
+  </thead>
+  <tbody data-link="row" class="rowlink">
+    {% for row in info_list %}
+    <tr>
+      <td>
+        <a href="{% url 'results:individual' row.0 %}">{{ row.1 }}</a>
+      </td>
+      <td>
+        <a href="{% url 'results:individual' row.0 %}">{{ row.2 }}</a>
+      </td>
+      <td>
+        <a href="{% url 'results:individual' row.0 %}">{{ row.3|safe }}</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<small>If there's only one row, it means that the specified intron has no annotated orthologs.</small>
+<br />
+
+
+{% endblock %}
