@@ -67,20 +67,12 @@ genome, score, intron_class, intron_id, chromosome, start, stop, length,
 strand, rank, phase, tds, up_seq, branch_seq, down_seq, full_seq, gene_symbol,
 gene_id, trans_id))
         if intron_class == "U12-Dependent":
-<<<<<<< HEAD
-                cur.execute(f'INSERT INTO U12s VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\
-=======
             cur.execute(f'INSERT INTO U12s VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,\
->>>>>>> 59179440ead6c3e9d32b5797311ca76b48343ddf
 %s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)', (short_seq, tax_name, com_name, 
 genome, score, intron_class, intron_id, chromosome, start, stop, length, 
 strand, rank, phase, tds, up_seq, branch_seq, down_seq, full_seq, gene_symbol,
 gene_id, trans_id))
-<<<<<<< HEAD
         cur.execute('COMMIT')
-=======
-    cur.execute('COMMIT')
->>>>>>> 59179440ead6c3e9d32b5797311ca76b48343ddf
 
 # get command-line arguments
 if len(sys.argv) != 4:
@@ -119,11 +111,7 @@ with open(f'info/{genome}_gene_symbols.tsv', 'r') as in_file:
 
 # get all of the annotation information from intronIC
 print(f'Reading intronIC output and creating annotation SQL table.')
-<<<<<<< HEAD
-with open(f'info/{genome}_info.iic', 'r') as in_file:
-=======
 with open(f'info/{genome}_info.tsv', 'r') as in_file:
->>>>>>> 59179440ead6c3e9d32b5797311ca76b48343ddf
     i = 0
     for batch in iter(lambda: tuple(islice(in_file, 10000)), ()):
         i += 1
