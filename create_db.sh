@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # create_db.sh
 # creates database of intron annotation information annotated by intronIC and homology information annotated by reciprocal BLAST for 24 genomes
 # requires python3.6, R 3.5.0, and blast 2.7.1
