@@ -1,0 +1,1 @@
+These are all the files used to create the Intron Annotation and Orthology Database and accompanying website (available [here](introndb.lerner.ccf.org)). If you are interested in creating your own version of the IAOD with data from whatever genomes are relevant to your interests, look at [the command-line version](https://github.com/Devlin-Moyer/cmdline_iaod).

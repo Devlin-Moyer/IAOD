@@ -1,4 +1,0 @@
-This directory and its subdirectories contain all of the files and scripts associated with the Intron Annotation Database (IAOD), including pipelines for adding new data to the database (the series of batch scripts starting with add_genome1.sh), re-creating the entire database backend from scratch (create_db.sh), and all of the scripts, templates, etc. necessary to run the actual website (contained within the 
-intron_website, results, orthologs, sitepages, static, and templates directories). The annotation and whole-genome FASTA files are not included in this repository, but can be downloaded from the Ensembl FTP site.
-
-Note that the create_db and add_new_genome pipelines will create a PostgreSQL database, and the connect statements in line 79 of reformatting.py and lines 88-90 of intron_website/settings.py may need to be changed. 
