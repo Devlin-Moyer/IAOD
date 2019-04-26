@@ -24,7 +24,7 @@ get_dataset <- function(tax_name, type) {
 get_gene_ids <- function(genome) {
   gene_ids <- system2(
     "awk",
-    c("'{print $15}'", paste("info/", genome, "_info.tsv", sep = "")),
+    c("'{print $16}'", paste("info/", genome, "_info.tsv", sep = "")),
     stdout = TRUE
   )
   return(unique(gene_ids))

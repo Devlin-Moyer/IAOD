@@ -34,7 +34,7 @@ print(f'There were {len(exon_only_coords)} introns not defined by CDSes.')
 
 with open(f'info/{genome}_exon_info.iic', 'r') as exon_file, \
 open(f'info/{genome}_cds_info.iic', 'r') as cds_file,\
-open(f'info/{genome}_info.iic', 'w') as out_file:
+open(f'info/{genome}_info.tsv', 'w') as out_file:
     i = 0
     matches = 0
     for line in exon_file:

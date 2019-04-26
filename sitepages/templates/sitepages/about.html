@@ -11,7 +11,8 @@
   <p>
     Brief background information and descriptions of the inner workings of the
     database can be found in the headings below; for thorough information on 
-    how the website works and why it was made, see the paper at (link coming soon!).
+    how the website works and why it was made, see the paper in Nucleic Acids
+    Research at (link coming soon!).
   </p>
   <div id="accordion">
     <div class="card">
@@ -146,7 +147,7 @@
 	    Bootstrap</a>, an open-source toolkit for developing with HTML, 
             CSS, and JavaScript. All code used to create the database and the 
             website is available as a 
-            <a href="https://github.com/Der-moi/IAOD">Github respository</a>.
+            <a href="https://github.com/Devlin-Moyer/IAOD">Github respository</a>.
 	  </p>
         </div>
       </div>
@@ -195,36 +196,24 @@
         <div class="card-body">
           <p>
             The ortholog search engine searches a distinct table in the 
-            PostgreSQL database that contains two columns: a unique integer
-            ortholog cluster ID and a list of intron IDs belonging to that 
-            ortholog cluster. Pairs of orthologous introns were determined by
-            reciprocal pairwise alignment of all introns in two orthologous 
-            genes (as annotated by Ensembl). Once the list of orthologous 
-            intron pairs was created, this list was used as an edge set to 
-            create a graph of orthologous relationships in which every vertex
-            represents an intron and an edge between two vertices represents an
-            orthologous relationship. This graph consists of a large number of
-            disjoint components, with each component representing a group of
-            orthologous genes. Each component was assigned a number and the 
-            list of intron IDs associated with each number was used to create
-            the PostgreSQL table. For an introduction to basic concepts and 
-            terminology in graph theory, see Chartrand and Zhang, A First
-            Course in Graph Theory (ISBN-10: 0486483681, ISBN-13: 
-            978-0486483689). 
+            PostgreSQL database that contains only one column: a list of 
+            intron IDs corresponding to a group of orthologous introns. Pairs
+            of orthologous introns were determined by reciprocal pairwise 
+            alignment of all introns in regions of the analyzed genomes that
+            had strong alignment as annotated by BLASTp.
 	  </p>
 	  <p>
-	    Users can use either an ortholog cluster ID or an intron ID 
-	    (presumably obtained from searches on one of the other search 
-	    engines) to obtain a list of all intron sequences in each ortholog 
-	    cluster. Since all introns are not the same length, the sequence 
-	    shown for each intron contains 15 nucleotides of the upstream exon,
-	    a vertical bar denoting the 5' splice site, the first 10 
-	    nucleotides of the intron, the last 46 nucleotides of the intron 
-	    with brackets around the most likely branch point region, a 
-	    vertical bar denoting the 3' splice site, and 15 nucleotides of the
-	    downstream exon. These sequences were chosen because they were felt
-	    to concisely represent the most evolutionarily important regions of
-	    each intron.
+	    Users can use an intron's unique intron ID (presumably obtained 
+            from searches on one of the other search engines) to obtain a list
+            of all intron sequences in each ortholog cluster. Since all 
+            introns are not the same length, the sequence shown for each intron
+            contains 15 nucleotides of the upstream exon, a vertical bar 
+            denoting the 5' splice site, the first 10 nucleotides of the 
+            intron, the most likely branch point region, the last 5 nucleotides
+            of the intron, a vertical bar denoting the 3' splice site, and 15 
+            nucleotides of the downstream exon. These sequences were chosen
+            because they were felt to concisely represent the most 
+            evolutionarily important regions of each intron.
 	  </p>
         </div>
       </div>

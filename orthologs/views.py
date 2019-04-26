@@ -1,3 +1,4 @@
+# views.py
 from django.shortcuts import render
 from django.db import connection as conn 
 from django.contrib.postgres.search import SearchVector, SearchQuery
@@ -8,7 +9,8 @@ import re
 # appropriate sequences in the appropriate order for display on the ortholog
 # search results page
 def organize_sequences(seqs):
-    seq = seqs['up_seq'][-15:] + '|' + seqs['short_seq'] + '|' + seqs['down_seq'][0:15]
+    seq = seqs['up_seq'][-15:] + '|' + seqs['short_seq'] + '|' + \
+        seqs['down_seq'][0:15]
     # make list of info for the specified intron
     table_list = [
         seqs['intron_id'], seqs['tax_name'], seqs['gene_symbol'], seq
@@ -37,14 +39,17 @@ def ortholog_search(request):
     return render(request, 'orthologs/search.html')
 
 def ortholog_list(request):  
-    # get input intron id and start a list of IDs
+    # get input intron id and find out which clusters it's in
     ref_id = request.GET.get('ref_id')
+    rows = models.OrthologsLookup.filter(intron_id = ref_id).values('clusters')
+    # get a list of all the ids in all of those clusters
     ortholog_id_list = [ref_id]
-    ids = models.Orthologs.objects.annotate(
-        search = SearchVector('cluster')
-    ).filter(search = SearchQuery(ref_id)).values('cluster')
-    for thing in ids:
-        ortholog_id_list.extend(thing['cluster'].rstrip('\n').split('\t'))
+    for row in rows:
+        ids = models.Orthologs.objects.filter(id = row).values('cluster')
+        for intron in ids:
+            ortholog_id_list.extend(thing['cluster'].rstrip('\n').split('\t'))
+    # each cluster isn't a unique set of ids so remove duplicates
+    ortholog_id_list = set(ortholog_id_list)
     # start a list of intron info to pass to the template
     info_list = []
     # get the sequences for all of the introns
