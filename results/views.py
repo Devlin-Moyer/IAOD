@@ -227,7 +227,7 @@ def main_list(request):
         elif field[0] == 'tds': # add a hyphen if necessary
             if len(field[1]) == 4:
                 field[1] = field[1][0:2] + '-' + field[1][2:]
-            filters['tds_icontains'] = field[1]
+            filters['tds__icontains'] = field[1]
         else: # everything else should be a simple queryset filter
             # add to the dictionary
             filters[field[0] + '__icontains'] = field[1]
