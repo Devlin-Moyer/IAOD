@@ -41,7 +41,7 @@ def ortholog_search(request):
 def ortholog_list(request):  
     # get input intron id and find out which clusters it's in
     ref_id = request.GET.get('ref_id')
-    rows = models.OrthologsLookup.filter(intron_id = ref_id).values('clusters')
+    rows = models.OrthologsLookup.objects.filter(intron_id = ref_id).values('clusters')
     # get a list of all the ids in all of those clusters
     ortholog_id_list = [ref_id]
     for row in rows:
