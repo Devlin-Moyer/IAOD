@@ -48,7 +48,7 @@ def ortholog_list(request):
     for row in rows:
         ids = models.Orthologs.objects.filter(id = row).values('cluster')
         for intron in ids:
-            ortholog_id_list.extend(thing['cluster'].rstrip('\n').split('\t'))
+            ortholog_id_list.extend(intron['cluster'].rstrip('\n').split('\t'))
     # each cluster isn't a unique set of ids so remove duplicates
     ortholog_id_list = set(ortholog_id_list)
     # start a list of intron info to pass to the template
