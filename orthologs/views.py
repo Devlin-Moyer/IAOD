@@ -1,6 +1,6 @@
 # views.py
 from django.shortcuts import render
-from django.db import connection as conn 
+from django.db import connection as conn
 from django.contrib.postgres.search import SearchVector, SearchQuery
 from results import models
 import re
@@ -17,8 +17,8 @@ def organize_sequences(seqs):
     ]
     return(table_list)
 
-# given an intron ID, figures out what genome it's in and queries the 
-# appropriate model 
+# given an intron ID, figures out what genome it's in and queries the
+# appropriate model
 def get_seqs(input_intron_id):
     # the name of the assembly a given intron is from is in the first part of
     # the intronIC ID, so we need to extract that for the model query
@@ -38,9 +38,10 @@ def get_seqs(input_intron_id):
 def ortholog_search(request):
     return render(request, 'orthologs/search.html')
 
-def ortholog_list(request):  
+def ortholog_list(request):
     # get input intron id and find out which clusters it's in
     ref_id = request.GET.get('ref_id')
+    ref_id = re.sub('_(cds|exon)', '', ref_id)
     rows = models.OrthologsLookup.objects.filter(intron_id = ref_id).values('clusters')
     # get a list of all the ids in all of those clusters
     ortholog_id_list = [ref_id]
