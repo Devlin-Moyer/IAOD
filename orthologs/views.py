@@ -49,6 +49,9 @@ def ortholog_list(request):
         rowids_str = row['clusters']
         # unfortunately, rowids is a string rn, so we need to turn it into an iterable
         rowids_list = [int(x) for x in rowids_str.lstrip('{').rstrip('}').split(',')]
+        # if there are no orthologs for this intron, return a blank list
+        if rowids_list == []:
+            return render(request, 'orthologs/list.html', {'info_list': []}
         for rowid in rowids_list:
             cluster_qs = models.Orthologs.objects.filter(id = rowid).values('cluster')
             for cluster in cluster_qs:
@@ -59,5 +62,12 @@ def ortholog_list(request):
     info_list = []
     # get the sequences for all of the introns
     for ortholog_id in ortholog_id_list:
-        info_list.append(get_seqs(ortholog_id))
+        # the ortholog table doesn't have _cds or _exon in any ID, but we need those now
+        # we also don't know whether the ID is supposed to have _cds or _exon in it, so 
+        # we need to try both
+        thing = re.match('(^.+)(-[^-]+@.+)', ortholog_id)
+        cds_id = thing.group(1) + '_cds' + thing.group(2)
+        exon_id = thing.group(1) + '_exon' + thing.group(2)
+        info_list.append(get_seqs(cds_id))
+        info_list.append(get_seqs(exon_id))
     return render(request, 'orthologs/list.html', {'info_list': info_list})
