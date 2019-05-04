@@ -2,6 +2,7 @@
 from django.shortcuts import render
 from django.db import connection as conn
 from django.contrib.postgres.search import SearchVector, SearchQuery
+from django.core.exceptions import ObjectDoesNotExist
 from results import models
 import re
 
@@ -37,7 +38,7 @@ def get_seqs(input_intron_id):
             'intron_id', 'up_seq', 'short_seq', 'branch_seq', 'down_seq',
             'tax_name', 'gene_symbol'
         ).get(intron_id = input_intron_id)
-    except DoesNotExist:
+    except ObjectDoesNotExist:
         return([])
     table_list = organize_sequences(info)
     return(table_list)
