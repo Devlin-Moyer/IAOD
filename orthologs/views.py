@@ -48,8 +48,8 @@ def ortholog_search(request):
 
 def ortholog_list(request):
     # get input intron id and find out which clusters it's in
-    ref_id = request.GET.get('ref_id')
-    ref_id = re.sub('_(cds|exon)', '', ref_id)
+    raw_ref_id = request.GET.get('ref_id')
+    ref_id = re.sub('_(cds|exon)', '', raw_ref_id)
     rows = models.OrthologsLookup.objects.filter(intron_id = ref_id).values('clusters')
     # get a list of all the ids in all of those clusters
     ortholog_id_list = [ref_id]
@@ -59,7 +59,9 @@ def ortholog_list(request):
         rowids_list = [int(x) for x in rowids_str.lstrip('{').rstrip('}').split(',')]
         # if there are no orthologs for this intron, return a blank list
         if rowids_list == []:
-            return render(request, 'orthologs/list.html', {'info_list': []})
+            return render(request, 'orthologs/list.html', 
+                {'info_list': get_seqs(raw_ref_id)}
+            )
         for rowid in rowids_list:
             cluster_qs = models.Orthologs.objects.filter(id = rowid).values('cluster')
             for cluster in cluster_qs:
