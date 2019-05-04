@@ -55,7 +55,7 @@ def ortholog_list(request):
         rowids_list = [int(x) for x in rowids_str.lstrip('{').rstrip('}').split(',')]
         # if there are no orthologs for this intron, return a blank list
         if rowids_list == []:
-            return render(request, 'orthologs/list.html', {'info_list': []}
+            return render(request, 'orthologs/list.html', {'info_list': []})
         for rowid in rowids_list:
             cluster_qs = models.Orthologs.objects.filter(id = rowid).values('cluster')
             for cluster in cluster_qs:
