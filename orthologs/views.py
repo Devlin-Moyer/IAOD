@@ -32,10 +32,13 @@ def get_seqs(input_intron_id):
     # from the SQLite table names, so we must do the same before trying to
     # query a model
     model_name = ''.join([x.title() for x in re.split('_|\.|-', genome)])
-    info = getattr(models, model_name).objects.values(
-        'intron_id', 'up_seq', 'short_seq', 'branch_seq', 'down_seq',
-        'tax_name', 'gene_symbol'
-    ).get(intron_id = input_intron_id)
+    try:
+        info = getattr(models, model_name).objects.values(
+            'intron_id', 'up_seq', 'short_seq', 'branch_seq', 'down_seq',
+            'tax_name', 'gene_symbol'
+        ).get(intron_id = input_intron_id)
+    except DoesNotExist:
+        return([])
     table_list = organize_sequences(info)
     return(table_list)
 
