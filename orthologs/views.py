@@ -22,7 +22,11 @@ def organize_sequences(seqs):
 def get_seqs(input_intron_id):
     # the name of the assembly a given intron is from is in the first part of
     # the intronIC ID, so we need to extract that for the model query
-    genome = re.search('(.+)_(cds|exon)', input_intron_id).group(1)
+    match_thing = re.search('(.+)_(cds|exon)', input_intron_id)
+    try:
+        genome = match_thing.group(1)
+    except:
+        return([])
 
     # Django makes pretty model names by using title() and removing _ - and .
     # from the SQLite table names, so we must do the same before trying to
