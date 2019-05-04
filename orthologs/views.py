@@ -78,4 +78,7 @@ def ortholog_list(request):
         exon_id = thing.group(1) + '_exon' + thing.group(2)
         info_list.append(get_seqs(cds_id))
         info_list.append(get_seqs(exon_id))
+    # info_list will have lots of empty lists in it for all the times we tried the cds
+    # id but it was supposed to be an exon id and visa versa, so we need to remove them
+    info_list = [x for x in info_list if x]
     return render(request, 'orthologs/list.html', {'info_list': info_list})
