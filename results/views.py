@@ -362,7 +362,7 @@ def individual(request, input_intron_id): # find all info relating to
     # single intron chosen from results page
     # the name of the assembly a given intron is from is in the first part of
     # the intronIC ID, so we need to extract that for the model query
-    genome = re.match('^(.+)_(cds|exon)', input_intron_id).group(1)
+    genome = re.match('^[^@]+(?=(-.{3}[^@]+?@))', input_intron_id).group(0)
 
     # Django makes pretty model names by using title() and removing _ - and .
     # from the SQLite table names, so we must do the same before trying to
