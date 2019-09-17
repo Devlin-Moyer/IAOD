@@ -165,7 +165,7 @@ python reformatting.py Pan_tro_3.0 Pan_troglodytes Chimpanzee
 python reformatting.py Rnor_6.0 Rattus_norvegicus Rat
 python reformatting.py R64-1-1 Saccharomyces_cerevisiae Budding_yeast
 python reformatting.py ASM294v2 Schizosaccharomyces_pombe Fission_yeast
-python reformatting.py FUGU4 Takifugu_rubripes Japanese_puffer
+python reformatting.py FUGU5 Takifugu_rubripes Japanese_puffer
 python reformatting.py TETRAODON8 Tetraodon_nigroviridis Yellow_spotted_puffer
 python reformatting.py AGPv4 Zea_mays Corn
 python reformatting.py JGI_4.2 Xenopus_tropicalis Frog
