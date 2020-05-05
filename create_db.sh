@@ -133,12 +133,7 @@ python deduplicate.py JGI_4.2
 python noncoding_introns.py JGI_4.2
 Rscript get_gene_symbols.R default JGI_4.2 Xenopus_tropicalis
 
-# turn lists of homologous pairs into a list of homology groups
-
-Rscript ortholog_clusters.R
-# for mysterious reasons, some "clusters" have only one intron in them
-awk 'NF > 1 {print}' extra_clusters.txt > clusters.txt
-rm extra_clusters.txt
+# add orthology information to database
 python ortholog_sql.py
 
 # combine annotation and homology information into a single table in the database for each genome

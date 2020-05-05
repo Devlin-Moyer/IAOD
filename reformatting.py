@@ -88,8 +88,7 @@ tax_name = re.sub('_', ' ', bad_tax_name)
 com_name = re.sub('_', ' ', bad_com_name)
 
 # get connection to database
-#conn = psycopg2.connect(dbname = 'introns', user = 'moyerd2')
-conn = psycopg2.connect(dbname = 'postgres', user = 'postgres', password = 'password')
+conn = psycopg2.connect(dbname = 'iaod', user = 'dcmoyer')
 cur = conn.cursor()
 
 # many of the genome assemblies have hyphens in them, so we have to escape them

@@ -18,7 +18,7 @@ def chunks(l, n):
 
 print(f'Preparing ortholog data.')
 # get connection to database
-conn = psycopg2.connect(dbname = 'introns', user = 'moyerd2')
+conn = psycopg2.connect(dbname = 'iaod', user = 'dcmoyer')
 cur = conn.cursor()
 
 # replace existing data every time
@@ -47,7 +47,7 @@ for intron in introns:
 # read in all of the ortholog clusters to make the ortholog table
 # also record which line numbers each intron appears on to make lookup table
 print('Creating ortholog cluster table.')
-with open('iaod.intron_clusters.supersets', 'r') as in_file:
+with open('IAOD_clustered_introns.txt', 'r') as in_file:
     batch_no = 0
     row_no = 0
     for batch in iter(lambda: tuple(islice(in_file, 10000)), ()):
