@@ -30,9 +30,11 @@ cur.execute('CREATE TABLE orthologs_lookup (intron_id TEXT, clusters TEXT)')
 # get list of all genomes
 cur.execute("SELECT table_name FROM information_schema.tables WHERE table_schema = 'public'")
 genomes = [genome for row in cur.fetchall() for genome in row]
-genomes.remove('orthologs')
-genomes.remove('orthologs_lookup')
-genomes.remove('u12s')
+# drop names of tables added by django
+genomes = [
+    i for i in genomes
+    if not re.search('(orthologs|auth|django|u12s)', i)
+]
 
 # get list of all intron IDs
 introns = []

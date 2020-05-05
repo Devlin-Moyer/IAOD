@@ -80,9 +80,8 @@ WSGI_APPLICATION = 'intron_website.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'postgres',
-        'USER': 'postgres',
-        'PASSWORD': 'password',
+        'NAME': 'iaod',
+        'USER': 'dcmoyer',
     }
 }
 

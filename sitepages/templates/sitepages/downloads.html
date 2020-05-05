@@ -98,5 +98,51 @@
       </div>
     </div>
   </div>
+  <div class="card">
+    <div class="card-header" id="OrthoHeader">
+      <h4>
+        <button class="btn btn-link" data-toggle="collapse" data-target="#OrthoFiles" aria-expanded="false" aria-controls="OrthoFiles">
+          Ortholog Data
+	</button>
+      </h4>
+    </div>
+    <div id="OrthoFiles" class="collapse" aria-labelledby="OrthoHeader" data-parent="#accordion">
+      <div class="card-body">
+        <table class="table">
+          <thead>
+            <tr>
+              <td colspan=2>
+                First column has every intron ID in that genome and intron class and second column has comma-delimited list of intron IDs of orthologous introns
+              </td>
+            </tr>
+            <tr>
+              <td>U12 Introns</td>
+              <td>U2 Introns</td>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in list %}
+            <tr>
+              {% with 'orthologs/'|add:item.1|add:'_U12.tsv' as file_path %}
+              <td>
+                <a href="{% static file_path %}">
+                  {{ item.0 }}
+                </a>
+              {% endwith %}
+              </td>
+              <td>
+              {% with 'orthologs/'|add:item.1|add:'_U2.tsv' as file_path %}
+                <a href="{% static file_path %}">
+                  {{ item.0 }}
+                </a>
+              </td>
+              {% endwith %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

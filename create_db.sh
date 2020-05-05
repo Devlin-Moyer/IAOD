@@ -130,7 +130,6 @@ Rscript get_gene_symbols.R plants AGPv4 Zea_mays
 python intronIC_devlin.py -nc -na -g Xenopus_tropicalis.JGI_4.2.dna.toplevel.fa -a Xenopus_tropicalis.JGI_4.2.92.gtf -n JGI_4.2_cds
 python intronIC_devlin.py -nc -na -e -g Xenopus_tropicalis.JGI_4.2.dna.toplevel.fa -a Xenopus_tropicalis.JGI_4.2.92.gtf -n JGI_4.2_exon
 python deduplicate.py JGI_4.2
-python noncoding_introns.py JGI_4.2
 Rscript get_gene_symbols.R default JGI_4.2 Xenopus_tropicalis
 
 # add orthology information to database
@@ -154,7 +153,6 @@ python reformatting.py GRCh38 Homo_sapiens Human
 python reformatting.py Mmul_8.0.1 Macaca_mulatta Rhesus_macaque
 python reformatting.py monDom5 Monodelphis_domestica Opossum
 python reformatting.py GRCm38 Mus_musculus Mouse
-python reformatting.py ASM20922v1 Nematostella_vectensis Sea_anemone
 python reformatting.py IRGSP-1.0 Oryza_sativa Rice
 python reformatting.py Pan_tro_3.0 Pan_troglodytes Chimpanzee
 python reformatting.py Rnor_6.0 Rattus_norvegicus Rat

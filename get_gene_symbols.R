@@ -12,11 +12,16 @@ get_dataset <- function(tax_name, type) {
     "eg_gene"
   )
   names <- strsplit(tax_name, "_")[[1]]
-  dataset <- paste(
-    paste(tolower(substr(names[1], 0, 1)), names[2], sep = ""), 
-    thing,
-    sep = "_"
-  )
+  # dog taxonomic name is just problematic
+  if (names[1] == "Canis") {
+    dataset <- "clfamiliaris_gene_ensembl"
+  } else {
+    dataset <- paste(
+      paste(tolower(substr(names[1], 0, 1)), names[2], sep = ""), 
+      thing,
+      sep = "_"
+    )
+  }
   return(dataset)
 }
 
