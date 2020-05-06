@@ -169,7 +169,11 @@ def U12_list(request): # parse input from search bar and GET requested info
             }
         )
     else: # if they submitted a blank query, just give them all human U12s
-        search_hits = models.U12S.objects.filter(genome = 'GRCh38')
+        search_hits = models.U12S.objects.annotate(
+            search = SearchVector(
+                'genome'
+            )
+        ).filter(search = SearchQuery('GRCh38'))
         return render(
             request,
             'results/U12_list.html',
