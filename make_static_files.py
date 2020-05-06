@@ -139,7 +139,7 @@ cur = conn.cursor()
 
 # loop over list of all genomes with information in the database
 #genomes = get_all_genomes(cur)
-genomes = ['FUGU5', 'GRCh37']
+genomes = ['FUGU5']
 for genome in genomes:
     #print(f'Making static files for {genome}.')
     # make BED files
@@ -149,11 +149,13 @@ for genome in genomes:
     # we'll set those aside while making the FASTA files
     U12_ids = make_fasta_file(cur, genome, 'U12')
     U2_ids = make_fasta_file(cur, genome, 'U2')
-    # make ortholog files
-    # if there are no U12s in this genome, make an empty file
-    if len(U12_ids) == 0:
-        with open(f'static/orthologs/{genome}_U12.tsv', 'w') as out:
-            out.write('\n')
-    else:
-        make_ortholog_file(cur, genome, 'U12', U12_ids)
-    make_ortholog_file(cur, genome, 'U2', U2_ids)
+    # make ortholog files for everything but GRCh37 because we don't actually
+    # have ortholog data for GRCh37
+    if genome != 'GRCh37':
+        # if there are no U12s in this genome, make an empty file
+        if len(U12_ids) == 0:
+            with open(f'static/orthologs/{genome}_U12.tsv', 'w') as out:
+                out.write('\n')
+        else:
+            make_ortholog_file(cur, genome, 'U12', U12_ids)
+        make_ortholog_file(cur, genome, 'U2', U2_ids)

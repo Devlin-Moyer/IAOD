@@ -51,7 +51,7 @@ def ortholog_list(request):
     # they are and just have {} as their value for clusters, so start by checking for
     # an empty QuerySet
     if not rows:
-        return render(request, 'orthologs/list.html', {'info_list': get_seqs(ref_id)})
+        return render(request, 'orthologs/list.html', {'info_list': [get_seqs(ref_id)]})
     for row in rows:
         rowid_str = row['clusters']
         # remove {}s from rowids
@@ -61,7 +61,7 @@ def ortholog_list(request):
         # if rowid is currently an empty string, there are no orthologs
         if rowid == '':
             return render(request, 'orthologs/list.html', 
-                {'info_list': get_seqs(ref_id)}
+                {'info_list': [get_seqs(ref_id)]}
             )
         else:
             cluster_qs = models.Orthologs.objects.filter(id = rowid).values('cluster')
