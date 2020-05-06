@@ -23,12 +23,8 @@ def organize_sequences(seqs):
 def get_seqs(input_intron_id):
     # the name of the assembly a given intron is from is in the first part of
     # the intronIC ID, so we need to extract that for the model query
-    match_thing = re.search('(.+)_(cds|exon)', input_intron_id)
-    try:
-        genome = match_thing.group(1)
-    except:
-        return([])
-
+    match_obj = re.match('(^.+)(-[^-]+@.+)', input_intron_id)
+    genome = match_obj.group(1)
     # Django makes pretty model names by using title() and removing _ - and .
     # from the SQLite table names, so we must do the same before trying to
     # query a model
@@ -39,6 +35,7 @@ def get_seqs(input_intron_id):
             'tax_name', 'gene_symbol'
         ).get(intron_id = input_intron_id)
     except ObjectDoesNotExist:
+        print('Object didn\'t exist')
         return([])
     table_list = organize_sequences(info)
     return(table_list)
@@ -47,40 +44,33 @@ def ortholog_search(request):
     return render(request, 'orthologs/search.html')
 
 def ortholog_list(request):
-    # get input intron id and find out which clusters it's in
-    raw_ref_id = request.GET.get('ref_id')
-    ref_id = re.sub('_(cds|exon)', '', raw_ref_id)
+    # get input intron id and find out which cluster it's in
+    ref_id = request.GET.get('ref_id')
     rows = models.OrthologsLookup.objects.filter(intron_id = ref_id).values('clusters')
-    # get a list of all the ids in all of those clusters
-    ortholog_id_list = [ref_id]
+    # sometimes introns with no orthologs just aren't in orthologs lookup and sometimes
+    # they are and just have {} as their value for clusters, so start by checking for
+    # an empty QuerySet
+    if not rows:
+        return render(request, 'orthologs/list.html', {'info_list': get_seqs(ref_id)})
     for row in rows:
-        rowids_str = row['clusters']
-        # unfortunately, rowids is a string rn, so we need to turn it into an iterable
-        rowids_list = [int(x) for x in rowids_str.lstrip('{').rstrip('}').split(',')]
-        # if there are no orthologs for this intron, return a blank list
-        if rowids_list == []:
+        rowid_str = row['clusters']
+        # remove {}s from rowids
+        rowid = rowid_str.lstrip('{').rstrip('}')
+        # make a list of all orthologs of this intron, starting with this intron
+        ortholog_id_list = [ref_id]
+        # if rowid is currently an empty string, there are no orthologs
+        if rowid == '':
             return render(request, 'orthologs/list.html', 
-                {'info_list': get_seqs(raw_ref_id)}
+                {'info_list': get_seqs(ref_id)}
             )
-        for rowid in rowids_list:
+        else:
             cluster_qs = models.Orthologs.objects.filter(id = rowid).values('cluster')
             for cluster in cluster_qs:
-                ortholog_id_list.extend(cluster['cluster'].rstrip('\n').split('\t'))
+                ortholog_id_list.extend(cluster['cluster'].split('\t'))
     # each cluster isn't a unique set of ids so remove duplicates
     ortholog_id_list = set(ortholog_id_list)
-    # start a list of intron info to pass to the template
-    info_list = []
-    # get the sequences for all of the introns
-    for ortholog_id in ortholog_id_list:
-        # the ortholog table doesn't have _cds or _exon in any ID, but we need those now
-        # we also don't know whether the ID is supposed to have _cds or _exon in it, so 
-        # we need to try both
-        thing = re.match('(^.+)(-[^-]+@.+)', ortholog_id)
-        cds_id = thing.group(1) + '_cds' + thing.group(2)
-        exon_id = thing.group(1) + '_exon' + thing.group(2)
-        info_list.append(get_seqs(cds_id))
-        info_list.append(get_seqs(exon_id))
-    # info_list will have lots of empty lists in it for all the times we tried the cds
-    # id but it was supposed to be an exon id and visa versa, so we need to remove them
-    info_list = [x for x in info_list if x]
+    print(ortholog_id_list)
+    # make a list of all the info needed to render the results
+    info_list = [get_seqs(ortholog_id) for ortholog_id in ortholog_id_list]
+    print(info_list)
     return render(request, 'orthologs/list.html', {'info_list': info_list})
