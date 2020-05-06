@@ -72,5 +72,4 @@ def ortholog_list(request):
     print(ortholog_id_list)
     # make a list of all the info needed to render the results
     info_list = [get_seqs(ortholog_id) for ortholog_id in ortholog_id_list]
-    print(info_list)
     return render(request, 'orthologs/list.html', {'info_list': info_list})

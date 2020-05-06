@@ -153,6 +153,7 @@ def U12_list(request): # parse input from search bar and GET requested info
     # get the user query
     user_query = request.GET.get('query')
     if user_query is not '':
+        print(user_query)
         search_hits = models.U12S.objects.annotate(
             search = SearchVector(
                 'genome', 'tax_name', 'com_name', 'gene_symbol', 'gene_id',
