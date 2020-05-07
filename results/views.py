@@ -80,11 +80,10 @@ def column_name_improvement(column_list, query_text):
 def query_models(filters, gene_names, genome_list, column_list, query_text):
     # the user entered nothing into any field, so give them all human U12s
     if filters == {} and genome_list == [] and gene_names == Q():
-        search_results = models.U12S.objects.filter(genome = 'GRCh38')\
-        .values(*column_list)
+        search_results = models.U12S.objects.filter(genome = 'GRCh38').values(*column_list)
         table_rows = QS_to_list(search_results, column_list)
-        query_text = 'No search input; showing all U12-dependent introns \
-from human genome hg38 AKA GRCh38. '
+        query_text = 'No search input; showing all U12-dependent introns '
+        query_text += 'from human genome hg38 AKA GRCh38. '
         return(table_rows, query_text)
         # since we may need to run the same query on multiple tables, we will 
         # be generating multiple QuerySets. We can covert each one into a list 
