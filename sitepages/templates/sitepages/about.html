@@ -11,8 +11,8 @@
   <p>
     Brief background information and descriptions of the inner workings of the
     database can be found in the headings below; for thorough information on 
-    how the website works and why it was made, see the paper in Nucleic Acids
-    Research at (link coming soon!).
+    how the website works and why it was made, see the 
+    <a href="https://doi.org/10.1101/620658">preprint</a>.
   </p>
   <div id="accordion">
     <div class="card">
@@ -213,7 +213,9 @@
             of the intron, a vertical bar denoting the 3' splice site, and 15 
             nucleotides of the downstream exon. These sequences were chosen
             because they were felt to concisely represent the most 
-            evolutionarily important regions of each intron.
+            evolutionarily important regions of each intron. The intron ID on
+	    each intron's individual page is a link to the results of an
+	    ortholog search for that intron.
 	  </p>
         </div>
       </div>
@@ -265,7 +267,12 @@
             downloads page. There are two files of each type for each genome 
             assembly represented in the database- one containing only the 
             U2-dependent introns and one containing only the U12-dependent 
-            introns. 
+            introns. There are also files containing the orthology data
+	    available for download. Each file has one row for each intron in
+	    that genome and class that has an annotated ortholog, with the
+	    intron ID in the first column and a comma-delimited list of all
+	    intron IDs orthologous to that intron (but not necessarily 
+            orthologous to every other intron in the list) in the second.
           </p>
         </div>
       </div>
