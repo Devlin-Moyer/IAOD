@@ -134,9 +134,9 @@ cur = conn.cursor()
 
 # loop over list of all genomes with information in the database
 genomes = get_all_genomes(cur)
-#genomes = ['FUGU5']
+#genomes = ['Amel_4.5', 'TETRAODON8', 'WBcel235']
 for genome in genomes:
-    #print(f'Making static files for {genome}.')
+    print(f'Making static files for {genome}.')
     # make BED files
     make_bed_file(cur, genome, 'U12')
     make_bed_file(cur, genome, 'U2')
@@ -153,4 +153,5 @@ for genome in genomes:
                 out.write('\n')
         else:
             make_ortholog_file(cur, genome, 'U12', U12_ids)
+        # every organism has plenty of U2 introns so always make that file
         make_ortholog_file(cur, genome, 'U2', U2_ids)

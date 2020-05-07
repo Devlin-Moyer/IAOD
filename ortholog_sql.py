@@ -36,10 +36,15 @@ genomes = [
     if not re.search('(orthologs|auth|django|u12s)', i)
 ]
 
-# get list of all intron IDs
+# get list of all intron IDs and count how many introns are in each genome
+genome_count_dict = dict()
 introns = []
 for genome in genomes:
-    introns.extend(get_introns(cur, genome))
+    one_genome = get_introns(cur, genome)
+    introns.extend(one_genome)
+    genome_count_dict[genome] = len(one_genome)
+
+print(genome_count_dict)
 
 # make dict where each key is an intron ID and each value is an empty list
 cluster_dict = {}
