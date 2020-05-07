@@ -39,9 +39,11 @@
       <td>Intron Class:</td>
       <td>{{ data.intron_class }}
     </tr>
-    <tr>
+    <tr title="Click to see orthologs">
       <td>Unique ID:</td>
-      <td>{{ data.intron_id }}</td>
+      <td>
+	<a href="{% url 'orthologs:list' %}?ref_id={{ data.intron_id }}">{{ data.intron_id }}</a>
+      </td>
     </tr>
   </tbody>
 </table>

@@ -363,8 +363,8 @@ def advanced_list(request):
         }
     )
 
-def individual(request, input_intron_id): # find all info relating to
-    # single intron chosen from results page
+def individual(request, input_intron_id): 
+    # find all info relating to a single intron chosen from results page
     # the name of the assembly a given intron is from is in the first part of
     # the intronIC ID, so we need to extract that for the model query
     genome = re.match('^[^@]+(?=(-.{3}[^@]+?@))', input_intron_id).group(0)

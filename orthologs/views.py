@@ -35,7 +35,6 @@ def get_seqs(input_intron_id):
             'tax_name', 'gene_symbol'
         ).get(intron_id = input_intron_id)
     except ObjectDoesNotExist:
-        print('Object didn\'t exist')
         return([])
     table_list = organize_sequences(info)
     return(table_list)
@@ -44,7 +43,7 @@ def ortholog_search(request):
     return render(request, 'orthologs/search.html')
 
 def ortholog_list(request):
-    # get input intron id and find out which cluster it's in
+    # get input intron id from request and get the clusters it is in
     ref_id = request.GET.get('ref_id')
     rows = models.OrthologsLookup.objects.filter(intron_id = ref_id).values('clusters')
     # sometimes introns with no orthologs just aren't in orthologs lookup and sometimes
