@@ -6,3 +6,4 @@ bin/
 pycache/
 include/
 *.txt*
+*.gz

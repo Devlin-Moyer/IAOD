@@ -39,10 +39,10 @@
       <td>Intron Class:</td>
       <td>{{ data.intron_class }}
     </tr>
-    <tr title="Click to see orthologs">
+    <tr>
       <td>Unique ID:</td>
       <td>
-	<a href="{% url 'orthologs:list' %}?ref_id={{ data.intron_id }}">{{ data.intron_id }}</a>
+	{{ data.intron_id }}
       </td>
     </tr>
   </tbody>
@@ -120,6 +120,39 @@
 <div id="collapse1" class="panel-collapse collapse">
   <div class="row-fluid">{{ data.full_seq }}</div>
 </div>
+<small>
+  Click on a row to go to that intron's info page.
+  The splice sites are marked with vertical bars and the putative branch point sequence is in between the ellipses.
+</small>
+<table data-toggle="table" data-pagination=true style="font-family:monospace;">
+  <thead>
+    <tr>
+      <h4>Orthologous Introns</h4>
+    </tr>
+    <tr>
+      <th data-sortable="true" data-sorter="alphanum1">Taxonomic Name</th>
+      <th data-sortable="true" data-sorter="alphanum1">Gene Name</th>
+      <th data-sortable="true" data-sorter="alphanum1">Sequence</th>
+    </tr>
+  </thead>
+  <tbody data-link="row" class="rowlink">
+    {% for row in info_list %}
+    <tr>
+      <td>
+        <a href="{% url 'results:individual' row.0 %}">{{ row.1 }}</a>
+      </td>
+      <td>
+        <a href="{% url 'results:individual' row.0 %}">{{ row.2 }}</a>
+      </td>
+      <td>
+        <a href="{% url 'results:individual' row.0 %}">{{ row.3|safe }}</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<small>If there's only one row, this intron has no annotated orthologs.</small>
+<br />
 <br />
 <table class="table">
   <thead>

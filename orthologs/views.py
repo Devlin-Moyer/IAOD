@@ -68,7 +68,6 @@ def ortholog_list(request):
                 ortholog_id_list.extend(cluster['cluster'].split('\t'))
     # each cluster isn't a unique set of ids so remove duplicates
     ortholog_id_list = set(ortholog_id_list)
-    print(ortholog_id_list)
     # make a list of all the info needed to render the results
     info_list = [get_seqs(ortholog_id) for ortholog_id in ortholog_id_list]
     return render(request, 'orthologs/list.html', {'info_list': info_list})
