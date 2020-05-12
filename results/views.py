@@ -202,7 +202,6 @@ def get_orthologs(ref_id):
     ortholog_id_list = set(ortholog_id_list)
     # make a list of all the info needed to render the results
     info_list = [get_seqs(ortholog_id) for ortholog_id in ortholog_id_list]
-    f
     return(info_list)
 
 # actual views ################################################################

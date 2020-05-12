@@ -8,3 +8,4 @@ include/
 *.txt
 *.gz
 *.tsv
+class_conversions.py
